@@ -9,19 +9,15 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class warga extends Authenticatable
 {
     use HasFactory;
-    protected $guard = 'warga';
-    protected $primaryKey = 'id_warga';
-    
-    protected $fillable = [
-        'nama_warga',
-        'no_kk',
-        'no_hp_warga',
-        'email',
-        'password',
-        'alamat',
-        'RT',
-        'RW',
-    ];
+    protected $table = 'wargas';
+    protected $primaryKey = 'id';
+
+    // Relasi dengan Laporan
+    public function laporans()
+    {
+        return $this->hasMany(laporan::class, 'id_warga');
+    }
+
     protected $hidden = [
         'password',
     ];
@@ -35,8 +31,4 @@ class warga extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function laporan()
-    {
-        return $this->belongsTo(laporan::class, 'id', 'id_laporan');
-    }
 }

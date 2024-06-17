@@ -8,22 +8,42 @@ use Illuminate\Database\Eloquent\Model;
 class pemeriksaan extends Model
 {
     use HasFactory;
+    protected $table = 'pemeriksaans';
+    protected $primaryKey = 'id';
     protected $fillable = [
         'id_user',
         'id_laporan',
         'siklus',
-        'indikator',
+        'kaleng_bekas' ,
+        'pecahan_botol' ,
+        'ban_bekas' ,
+        'tempayan' ,
+        'bak_mandi' ,
+        'lain_lain' ,
+        'status_jentik',
         'bukti_pemeriksaan',
         'ket_pemeriksaan',
         'tindakan',
+        'status_jentik'
     ];
     /*public function laporan()
     {
         return $this->hasOne(warga::class, 'id', 'id_laporan');
     }*/
-    public function user()
+    public function laporan()
     {
-        return $this->hasMany(user::class, 'id', 'id_user');
+        return $this->belongsTo(laporan::class, 'id_laporan');
     }
 
+    public function user()
+    {
+        return $this->belongsTo(user::class, 'id_user');
+    }
+
+    public function tindakan()
+    {
+        return $this->hasMany(Tindakan::class, 'id_pemeriksaan');
+    }
 }
+
+

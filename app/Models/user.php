@@ -21,14 +21,34 @@ class user extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'no_kk',
+        'no_hp_user',
         'email',
         'password',
         'role',
+        'alamat',
+        'RT',
+        'RW'
     ];
+
+    public function laporans()
+    {
+        return $this->hasMany(laporan::class, 'id_user');
+    }
 
     public function pemeriksaan()
     {
-        return $this->belongsTo(pemeriksaan::class, 'id', 'id_pemeriksaan');
+        return $this->hasMany(pemeriksaan::class, 'id_user');
+    }
+
+    public function hasRole($role)
+    {
+        return $this->role === $role; // Misalnya, jika kolom untuk peran adalah 'role'
+    }
+
+    public function tindakan()
+    {
+        return $this->hasMany(Tindakan::class, 'id_user');
     }
 
     /**

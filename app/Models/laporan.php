@@ -8,21 +8,18 @@ use Illuminate\Database\Eloquent\Model;
 class laporan extends Model
 {
     use HasFactory;
-    protected $fillable = [
-        'id_warga',
-        'tgl_laporan',
-        'ket_laporan',
-        'status_laporan',
-    ];
+    protected $table = 'laporans';
+    protected $primaryKey = 'id';
 
-    public function warga()
+    // Relasi dengan Warga
+    public function user()
     {
-        return $this->hasMany(warga::class, 'id', 'id_warga');
+        return $this->belongsTo(user::class, 'id_user');
     }
 
     public function pemeriksaan()
     {
-        return $this->belongsTo(pemeriksaan::class, 'id_pemeriksaan');
+        return $this->hasMany(pemeriksaan::class, 'id_laporan');
     }
 
 }

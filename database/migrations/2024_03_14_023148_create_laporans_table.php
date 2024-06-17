@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('laporans', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('id_warga');
-            $table->foreign('id_warga')->references('id')->on('wargas');
+            $table->unsignedBigInteger('id_user');
+            $table->foreign('id_user')->references('id')->on('users');
             $table->date('tgl_laporan');
             $table->string('ket_laporan');
+            $table->string('bukti_laporan');
             $table->enum('status_laporan', ['proses', 'tindaklanjut jumantik', 'tindaklanjut puskesmas', 'selesai', 'ditolak']);
             $table->timestamps();
         });

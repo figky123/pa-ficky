@@ -5,6 +5,7 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use App\Models\user;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
@@ -21,14 +22,24 @@ class UserFactory extends Factory
      *
      * @return array<string, mixed>
      */
-    public function definition(): array
+    protected $model = user::class;
+
+    public function definition()
     {
+        $faker = \Faker\Factory::create('id_ID'); // Menggunakan locale Indonesia
+
         return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
-            'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
-            'remember_token' => Str::random(10),
+            'name' => $faker->name,
+            'email' => $faker->unique()->userName . '@gmail.com', // Email dengan domain @gmail.com
+            'password' => bcrypt('ficky123'), // Password terenkripsi
+            'no_kk' => $faker->unique()->numerify('###########'),
+            'no_hp_user' => '08' . $faker->numerify('##########'), // Nomor telepon diawali dengan 08
+            'alamat' => 'Kecamatan Payung Sekaki, Kelurahan Labuhbaru Timur, Pekanbaru, ' . $faker->streetAddress,
+            'RT' => $faker->numerify('##'),
+            'RW' => $faker->numerify('##'),
+            'role' => 'Warga', // Default role, akan di-overwrite di seeder
+            'created_at' => now(),
+            'updated_at' => now(),
         ];
     }
 

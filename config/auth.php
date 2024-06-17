@@ -18,10 +18,6 @@ return [
         'passwords' => 'users',
     ],
 
-    'warga'=>[
-        'driver'=>'eloquent',
-        'model'=>App\Models\warga::class,
-     ],
 
 
     /*
@@ -50,6 +46,12 @@ return [
             'driver'=>'session',
             'provider'=>'wargas',
          ],
+
+         'api' => [
+            'driver' => 'token',
+            'provider' => 'users',
+            'hash' => false,
+        ],
  
     ],
 
@@ -109,13 +111,14 @@ return [
     'passwords' => [
         'users' => [
             'provider' => 'users',
-            'table' => 'password_reset_tokens',
+            'table' => 'password_resets',
             'expire' => 60,
-            'throttle' => 60,
         ],
-        'wargas'=>[
-            'driver'=>'eloquent',
-            'model'=>App\Models\warga::class,
+
+        'wargas' => [
+            'provider' => 'admins',
+            'table' => 'password_resets',
+            'expire' => 60,
         ],
     ],
 

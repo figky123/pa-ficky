@@ -27,7 +27,7 @@ class StorelaporanRequest extends FormRequest
             'id_warga' => 'required',
             'tgl_laporan' => 'required',
             'ket_laporan' => 'required',
-            'status_laporan' => 'required',
+            'status_laporan' => '',
         ];
     }
 }

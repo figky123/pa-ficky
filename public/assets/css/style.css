@@ -9,6 +9,22 @@
 /*--------------------------------------------------------------
 # General
 --------------------------------------------------------------*/
+.badge-sangat-buruk {
+  background-color: #dc3545;
+}
+
+.badge-buruk {
+  background-color: #fd7e14;
+}
+
+.badge-sedang {
+  background-color: #ffc107;
+}
+
+.badge-baik {
+  background-color: #28a745;
+}
+
 :root {
   scroll-behavior: smooth;
 }
@@ -58,6 +74,41 @@ h6 {
 --------------------------------------------------------------*/
 .pagetitle {
   margin-bottom: 10px;
+}
+
+.card.info-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s;
+}
+
+.card.info-card:hover {
+  transform: translateY(-5px);
+}
+
+.card-title {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.card-icon {
+  background: #007bff;
+  color: #fff;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  font-size: 1.5rem;
+}
+
+.card .ps-3 {
+  flex-grow: 1;
+}
+
+.card .ps-3 h6 {
+  font-size: 2rem;
+  margin: 0;
+  color: #333;
 }
 
 .pagetitle h1 {
