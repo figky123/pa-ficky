@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>Laporan Jumantik</title>
     <style>
@@ -36,7 +35,7 @@
             color: #333;
             text-align: center;
             margin-bottom: 20px;
-            font-size: 20px;
+            font-size: 28px;
             font-weight: bold;
         }
 
@@ -74,7 +73,6 @@
         }
     </style>
 </head>
-
 <body>
     <div class="container">
         <div class="header">
