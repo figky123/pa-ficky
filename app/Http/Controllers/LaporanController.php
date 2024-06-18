@@ -106,8 +106,6 @@ class LaporanController extends Controller
         $laporan = Laporan::with('warga')->findOrFail($id);
         return response()->json($laporan);
     }
-
-
     /**
      * Display the specified resource.
      */
