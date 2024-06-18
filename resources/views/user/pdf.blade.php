@@ -12,12 +12,14 @@
         }
 
         .container {
-            width: 80%;
+            width: 90%;
+            max-width: 1200px;
             margin: 20px auto;
             background-color: #fff;
             padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            overflow-x: auto; /* Untuk memastikan kontainer dapat menggulir jika konten terlalu lebar */
         }
 
         .header {
@@ -35,32 +37,36 @@
             color: #333;
             text-align: center;
             margin-bottom: 20px;
-            font-size: 28px;
+            font-size: 20px;
             font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
-            border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
         }
 
         th,
         td {
-            border: 1px solid #ccc;
-            padding: 15px;
+            border: none;
+            padding: 12px; /* Mengurangi padding untuk memastikan tidak melebihi batas */
             text-align: center;
-            font-size: 16px;
+            font-size: 12px;
+            transition: background-color 0.3s, transform 0.3s;
         }
 
         th {
             background-color: #4CAF50;
             color: white;
             font-weight: bold;
-            border-bottom: 2px solid #ccc;
+            text-transform: uppercase;
+            border-bottom: 3px solid #ccc;
         }
 
         tr:nth-child(even) {
@@ -68,8 +74,13 @@
         }
 
         tr:hover {
-            background-color: #ddd;
-            transition: background-color 0.3s;
+            background-color: #d1e7dd;
+            transform: scale(1.02);
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        td:hover {
+            background-color: #e9f5f3;
         }
     </style>
 </head>
