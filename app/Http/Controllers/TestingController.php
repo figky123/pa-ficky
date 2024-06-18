@@ -8,7 +8,6 @@ use App\Models\user;
 use Illuminate\Support\Facades\Auth;
 use App\Models\tindakan;
 use Illuminate\Http\Request;
-
 class TestingController extends Controller
 {
     /**

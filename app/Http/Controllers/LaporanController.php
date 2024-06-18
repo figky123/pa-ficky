@@ -92,7 +92,6 @@ class LaporanController extends Controller
             $request->validate([
                 'status_laporan' => 'required|string|in:proses,tindaklanjut jumantik,tindaklanjut puskesmas,selesai,ditolak'
             ]);
-
             $laporan->status_laporan = $request->status_laporan;
             $laporan->save();
 
