@@ -65,36 +65,7 @@
                             <hr class="dropdown-divider">
                         </li>
 
-                        <li>
-                            <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
-                                <i class="bi bi-person"></i>
-                                <span>My Profile</span>
-                            </a>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-
-                        <li>
-                            <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
-                                <i class="bi bi-gear"></i>
-                                <span>Account Settings</span>
-                            </a>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-
-                        <li>
-                            <a class="dropdown-item d-flex align-items-center" href="pages-faq.html">
-                                <i class="bi bi-question-circle"></i>
-                                <span>Need Help?</span>
-                            </a>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-
+                    
                         <li>
                             <a class="dropdown-item d-flex align-items-center" href="logout">
                                 <i class="bi bi-box-arrow-right"></i>
@@ -128,11 +99,6 @@
                     <span>Laporan Jumantik 1</span>
                 </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="laporan_jumantik2">
-                    <i class="bi bi-file-earmark-text"></i>
-                    <span>Laporan Jumantik 2</span>
-                </a>
             </li>
             @elseif(Auth::user()->role == 'Puskesmas')
             <li class="nav-item">
@@ -188,6 +154,31 @@
                 <a class="nav-link collapsed" href="laporan_puskesmas">
                     <i class="bi bi-file-earmark-text"></i>
                     <span>Laporan Puskesmas</span>
+                </a>
+            </li>
+            @elseif(Auth::user()->role == 'Admin')
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="dashboard">
+                    <i class="bi bi-speedometer2"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="table_warga">
+                    <i class="bi bi-layout-text-window-reverse"></i>
+                    <span>Data Warga</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="table_petugas">
+                    <i class="bi bi-layout-text-window-reverse"></i>
+                    <span>Data Petugas</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="register">
+                    <i class="bi bi-person-plus"></i>
+                    <span>Tambah Akun</span>
                 </a>
             </li>
             @else

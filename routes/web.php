@@ -23,26 +23,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/create', function () {
-    return view('pegawai.create');
-});
-
-Route::get('/tabel', function () {
-    return view('pegawai.blade');
-});
-
-Route::get('/puskesmas', function () {
-    return view('layout.puskesmas');
-});
-
-Route::get('/create', function () {
-    return view('pegawai.create');
-});
-
-Route::get('/tabel', function () {
-    return view('pegawai.blade');
-});
-
 Route::get('/', function () {
     return view('user.auth.login');
 });
@@ -54,6 +34,8 @@ Route::post('/login', [UserAuthController::class, 'loginUser'])->name('user.logi
 Route::get('/logout', [UserAuthController::class, 'logoutUser'])->name('user.logout');
 Route::get('/register', [UserAuthController::class, 'registerUserForm'])->name('user.registerForm');
 Route::post('/register', [UserAuthController::class, 'registerUser'])->name('user.register');
+Route::get('/user/{id}/edit', [UserAuthController::class, 'editUser'])->name('user.edit');
+Route::put('/user/{id}', [UserAuthController::class, 'updateUser'])->name('user.update');
 Route::get('/token', function () {
     return csrf_token();
 });
@@ -63,12 +45,6 @@ Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('user.
 Route::get('/total-bangunan', [UserDashboardController::class, 'getTotalBangunan'])->name('pegawai.getBangunan');;
 Route::get('/chart-data', [UserController::class, 'chartData'])->name('chart-data');
 
-
-//CRUD USER
-Route::get('/pegawais', [UserController::class, 'index'])->name('pegawais');
-Route::post('/pegawais/update/{id}', [UserController::class, 'update'])->name('pegawais.update');
-Route::get('/pegawais/edit', [UserController::class, 'edit'])->name('pegawais.edit');
-Route::post('/pegawais/delete/{id}', [UserController::class, 'destroy'])->name('pegawais.delete');
 
 //CRUD LAPORAN
 //Route::get('/laporans', [LaporanController::class, 'index'])->name('laporans');

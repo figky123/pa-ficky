@@ -8,9 +8,9 @@
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<!-- Include SweetAlert2 CSS and JS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- SweetAlert2 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 @section('content')
 <main id="main" class="main">
     <div class="pagetitle">
@@ -24,20 +24,20 @@
         </nav>
     </div><!-- End Page Title -->
     <section class="section">
+         <!-- Tambah Data Button -->
+         @if(Auth::check() && Auth::user()->hasRole('Jumantik'))
+                        <button id="btnTambahData" class="btn btn-primary mb-3" data-toggle="modal" data-target="#tambahDataModal">Tambah Data</button>
+                        @endif
         <div class="row">
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Data Laporan Jumantik 1</h5>
-                        <!-- Tambah Data Button -->
-                        @if(Auth::check() && Auth::user()->hasRole('Jumantik'))
-                        <button id="btnTambahData" class="btn btn-primary" data-toggle="modal" data-target="#tambahDataModal">Tambah Data</button>
-                        @endif
-
                         @php
                         $user = Auth::user(); // Get the currently logged-in user
                         @endphp
                         <!-- Keterangan kolom di atas tabel -->
+                        @if ($user->role === 'Lurah' || $user->role === 'Puskesmas') <!-- Check if the user's role is 'Lurah' or 'Puskesmas' -->
                         <div class="alert alert-info" role="alert">
                             <strong>Keterangan Kolom Kontainer:</strong>
                             <ul>
@@ -46,7 +46,6 @@
                                 <li>(Tidak ada): Kontainer tidak ada di lokasi</li>
                             </ul>
                         </div>
-                        @if ($user->role === 'Lurah' || $user->role === 'Puskesmas') <!-- Check if the user's role is 'Lurah' or 'Puskesmas' -->
                         @php
                         $positif = $pemeriksaans->filter(function ($pemeriksaan) {
                         $jumlah = $pemeriksaan->kaleng_bekas + $pemeriksaan->pecahan_botol + $pemeriksaan->ban_bekas + $pemeriksaan->tempayan + $pemeriksaan->bak_mandi + $pemeriksaan->lain_lain;
@@ -193,9 +192,9 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
                 <!-- Form Tambah Data -->
-                <form action="{{ route('pemeriksaan.store') }}" method="POST" enctype="multipart/form-data">
+                <div class="modal-body">
+                <form id="formTambahData" method="post" action="{{ route('pemeriksaan.store') }}" enctype="multipart/form-data">
                     @csrf
                     <div class="form-group">
                         <label for="id_laporan">Laporan<span class="text-danger">*</span></label>
@@ -303,71 +302,47 @@
     </div>
 </div>
 <script>
-    function formatDate(dateTimeStr) {
-        const dateTime = new Date(dateTimeStr);
-        const day = String(dateTime.getDate()).padStart(2, '0');
-        const month = String(dateTime.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-        const year = dateTime.getFullYear();
-        const hours = String(dateTime.getHours()).padStart(2, '0');
-        const minutes = String(dateTime.getMinutes()).padStart(2, '0');
-        return `${day}/${month}/${year} ${hours}:${minutes}`;
-    }
-    //Handling form data change
-    document.addEventListener("DOMContentLoaded", function() {
-        $('#btnTambahData').on('click', function() {
-            $('#tambahDataModal').modal('show');
-        });
-
-        $('#formTambahDataForm').on('submit', function(e) {
-            e.preventDefault();
-            var formData = new FormData(this);
-            $.ajax({
-                type: 'POST',
-                url: "{{ route('laporan.store') }}",
-                data: formData,
-                contentType: false,
-                processData: false,
-                success: function(response) {
-                    if (response.message === 'Data berhasil disimpan') {
-                        $('#tambahDataModal').modal('hide');
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Berhasil!',
-                            text: 'Data berhasil ditambah!',
-                            showConfirmButton: false,
-                            timer: 2000,
-                            customClass: {
-                                popup: 'animated tada'
-                            }
-                        }).then((result) => {
-                            if (result.dismiss === Swal.DismissReason.timer) {
-                                location.reload(); // Refresh the page after the alert closes
-                            }
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Gagal',
-                            text: response.message
-                        });
-                    }
-                },
-                error: function(response) {
-                    console.log(response);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Terjadi kesalahan. Silakan coba lagi.'
-                    });
-                }
-            });
-        });
-        // Handling the image modal
+    $(document).ready(function() {
         $('.view-image-btn').on('click', function() {
             var imageUrl = $(this).data('image');
             var createdAt = $(this).data('created-at');
             $('#modalImage').attr('src', imageUrl);
-            $('#createdAtText').text('Created at: ' + formatDate(createdAt));
+            $('#createdAtText').text('Waktu Pemeriksaan: ' + new Date(createdAt).toLocaleString());
+        });
+
+        // Modal tambah data
+        $('#formTambahData').on('submit', function(event) {
+            event.preventDefault();
+            var formData = new FormData(this);
+            var url = $(this).attr('action');
+
+            $.ajax({
+                url: url,
+                method: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    console.log('Data berhasil ditambahkan');
+                    $('#tambahDataModal').modal('hide'); // Menutup modal setelah menambahkan data
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Data berhasil ditambahkan',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        location.reload(); // Memperbarui tampilan dengan data yang baru ditambahkan
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('Terjadi kesalahan:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Terjadi kesalahan',
+                        text: 'Silakan coba lagi',
+                    });
+                }
+            });
         });
     });
 </script>

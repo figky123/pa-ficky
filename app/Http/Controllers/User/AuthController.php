@@ -43,19 +43,21 @@ class AuthController extends Controller
 
     public function loginUser(Request $request)
     {
+
         $credentials = $request->only('email', 'password');
 
         if (Auth::guard('web')->attempt($credentials)) {
-            return redirect('/dashboard');
+            $request->session()->flash('success', 'Login berhasil');
+            return redirect()->intended('/dashboard');
         }
 
-        return back()->withErrors(['email' => 'Email atau password salah.']);
+        return back()->with('error', 'Email atau password salah');
     }
 
 
     public function registerUser(Request $request)
     {
-    
+
         $validator = Validator::make($request->all(), [
             'name' => "required",
             'email' => "required",
@@ -66,15 +68,15 @@ class AuthController extends Controller
             'RT' => "required",
             'RW' => "required",
             'role' => "required",
-            ]);
+        ]);
 
-            if ($validator->fails()) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Validation error',
-                    'errors' => $validator->errors()
-                ], 400);
-            }
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Validation error',
+                'errors' => $validator->errors()
+            ], 400);
+        }
 
         $user = user::create([
             'name' => $request->name,
@@ -86,24 +88,65 @@ class AuthController extends Controller
             'RT' => $request->RT,
             'RW' => $request->RW,
             'role' => $request->role,
-           
-            
+
+
         ]);
 
         if ($user) {
-            return redirect('/login', );;
+            return redirect()->route('user.registerForm')->with('success', 'Akun Berhasil Dibuat');
         } else {
-            return redirect('/user/gagal', );;
+            return redirect('/user/gagal');
         }
     }
 
+    public function editUser($id)
+    {
+        $user = User::findOrFail($id); // Sesuaikan dengan model dan primary key yang digunakan
+
+        // Jika menggunakan form model binding, Anda bisa langsung mengirimkan $user ke view
+        return view('user.editwarga', compact('user'));
+    }
+
+
+    public function updateUser(Request $request, $id)
+    {
+        // Validasi data yang masuk
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $id,
+            'no_kk' => 'nullable|string|max:255',
+            'no_hp_user' => 'nullable|string|max:20',
+            'alamat' => 'nullable|string',
+            'RT' => 'nullable|string|max:10',
+            'RW' => 'nullable|string|max:10',
+        ]);
+
+        // Cari data user berdasarkan ID
+        $user = User::findOrFail($id);
+
+        // Update data user berdasarkan input dari form
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->no_kk = $request->no_kk;
+        $user->no_hp_user = $request->no_hp_user;
+        $user->alamat = $request->alamat;
+        $user->RT = $request->RT;
+        $user->RW = $request->RW;
+
+        // Simpan perubahan
+        $user->save();
+
+        // Redirect kembali dengan pesan sukses
+        return redirect()->route('wargas')->with('success', 'Data warga berhasil diperbarui.');
+    }
+
+
     public function test()
     {
-        if (Auth::guard('web')->check())
-        {
-             $id = auth()->guard('User')->check();
-             var_dump($id);
-        }else{
+        if (Auth::guard('web')->check()) {
+            $id = auth()->guard('User')->check();
+            var_dump($id);
+        } else {
             return 'gagal';
         }
     }

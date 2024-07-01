@@ -12,7 +12,7 @@
 @section('content')
 <main id="main" class="main">
   <div class="pagetitle">
-    <h1>Data Laporan Warga</h1>
+    <h1>Data Warga</h1>
     <nav>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="index.html">Home</a></li>
@@ -21,13 +21,23 @@
       </ol>
     </nav>
   </div><!-- End Page Title -->
-
   <section class="section">
     <div class="row">
       <div class="col-lg-12">
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">Data Warga</h5>
+            @if(\Session::has('success'))
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+            <script>
+              Swal.fire({
+                icon: 'success',
+                title: 'Data Berhasil Diubah',
+                showConfirmButton: false,
+                timer: 1500
+              });
+            </script>
+            @endif
             <!-- Table with stripped rows -->
             <div class="table-responsive">
               <table class="table datatable">
@@ -40,6 +50,9 @@
                     <th>Alamat</th>
                     <th>RT</th>
                     <th>RW</th>
+                    @if(Auth::check() && Auth::user()->hasRole('Admin'))
+                    <th>Aksi</th> 
+                    @endif<!-- Kolom untuk tombol edit -->
                   </tr>
                 </thead>
                 <tbody id="table-wargas">
@@ -53,6 +66,13 @@
                     <td>{{ $user->alamat }}</td>
                     <td>{{ $user->RT }}</td>
                     <td>{{ $user->RW }}</td>
+                    <td>
+                    @if(Auth::check() && Auth::user()->hasRole('Admin'))
+                      <a href="{{ route('user.edit', $user->id) }}" class="btn btn-primary">
+                        <i class="bi bi-pencil-square"></i> <!-- Icon from Bootstrap Icons -->
+                      </a>
+                      @endif
+                    </td>
                   </tr>
                   @endif
                   @endforeach

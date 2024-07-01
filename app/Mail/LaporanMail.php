@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
@@ -6,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class LaporanBaru extends Mailable
+class LaporanMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -27,7 +28,9 @@ class LaporanBaru extends Mailable
      */
     public function build()
     {
-        return $this->subject('Laporan Baru Diterima')
-                    ->markdown('emails.laporanbaru');
+        return $this->view('emails.laporanbaru')
+            ->with([
+                'laporan' => $this->laporan,
+            ]);
     }
 }

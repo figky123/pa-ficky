@@ -1,7 +1,9 @@
 <section class="bg-light p-3 p-md-4 p-xl-5">
   <link rel="stylesheet" href="https://unpkg.com/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <script src="https://unpkg.com/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://unpkg.com/sweetalert2@11.3.0/dist/sweetalert2.all.min.js"></script>
   <style>
-   .login-container {
+    .login-container {
       max-width: 900px;
       margin: auto;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -9,31 +11,38 @@
       overflow: hidden;
       background: white;
     }
-   .login-image {
+
+    .login-image {
       display: none;
     }
-   .login-form {
+
+    .login-form {
       padding: 2rem;
     }
-   .login-form h4 {
+
+    .login-form h4 {
       margin-bottom: 1.5rem;
       font-size: 1.75rem;
       font-weight: bold;
       color: #333;
     }
-   .login-footer {
+
+    .login-footer {
       margin-top: 1.5rem;
       text-align: center;
     }
-   .login-footer a {
+
+    .login-footer a {
       color: #007bff;
       text-decoration: none;
     }
-   .login-footer a:hover {
+
+    .login-footer a:hover {
       text-decoration: underline;
     }
+
     @media (min-width: 768px) {
-     .login-image {
+      .login-image {
         display: block;
         width: 100%;
         height: 100%;
@@ -41,44 +50,52 @@
         border-top-left-radius: 10px;
         border-bottom-left-radius: 10px;
       }
-     .login-form {
+
+      .login-form {
         padding: 3rem;
       }
     }
-    /* Add some new styles to make it more visually appealing */
-   .login-container {
+
+    .login-container {
       background: linear-gradient(to bottom, #f7f7f7, #fff);
     }
-   .login-form {
+
+    .login-form {
       background: #fff;
       border: 1px solid #ddd;
       border-radius: 10px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
-   .login-form h4 {
+
+    .login-form h4 {
       color: #337ab7;
     }
-   .login-footer {
+
+    .login-footer {
       background: #f7f7f7;
       padding: 1rem;
       border-top: 1px solid #ddd;
     }
-   .login-footer a {
+
+    .login-footer a {
       color: #337ab7;
     }
-    /* Make it more responsive on mobile devices */
+
     @media (max-width: 767px) {
-     .login-container {
+      .login-container {
         margin: 20px auto;
         padding: 20px;
       }
-     .login-image {
+
+      .login-image {
         display: none;
       }
-     .login-form {
+
+      .login-form {
         padding: 20px;
       }
-     .login-footer {
+
+      .login-footer {
         padding: 10px;
       }
     }
@@ -91,6 +108,32 @@
       <div class="col-md-6">
         <div class="login-form">
           <h4 class="text-center">Login User</h4>
+
+          <!-- Notification messages -->
+          @if (session('success'))
+          <script>
+            Swal.fire({
+              title: 'Success',
+              text: "{{ session('success') }}",
+              icon: 'success',
+              confirmButtonText: 'OK'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                window.location.href = "{{ url('/dashboard') }}";
+              }
+            });
+          </script>
+          @elseif (session('error'))
+          <script>
+            Swal.fire({
+              title: 'Error',
+              text: "{{ session('error') }}",
+              icon: 'error',
+              confirmButtonText: 'OK'
+            });
+          </script>
+          @endif
+
           <form class="user" method="post" action="/login" enctype="multipart/form-data">
             @csrf
             <div class="form-floating mb-3">

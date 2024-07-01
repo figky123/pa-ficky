@@ -24,10 +24,9 @@
             </ol>
         </nav>
     </div><!-- End Page Title -->
-
     <section class="section">
         @if(Auth::check() && Auth::user()->hasRole('Puskesmas'))
-        <button id="btnTambahData" class="btn btn-primary" data-toggle="modal" data-target="#tambahDataModal">Tambah Data</button>
+        <button id="btnTambahData" class="btn btn-primary mb-3" data-toggle="modal" data-target="#tambahDataModal">Tambah Data</button>
         @endif
         <div class="row">
             <div class="col-lg-12">
@@ -53,22 +52,13 @@
                                     @php
                                     $loggedInUser = Auth::user();
                                     $userTindakans = App\Models\Tindakan::query();
-
-                                    if ($loggedInUser->hasRole('Puskesmas')) {
-                                    $userTindakans->where('id_user', $loggedInUser->id);
-                                    } elseif ($loggedInUser->hasRole('Warga')) {
-                                    $userTindakans->whereHas('pemeriksaan.user', function($query) use ($loggedInUser) {
-                                    $query->where('id', $loggedInUser->id);
-                                    });
-                                    }
-
                                     $userTindakans = $userTindakans->get();
                                     @endphp
 
                                     @foreach($userTindakans as $tindakan)
                                     <tr>
                                         <td>{{ $tindakan->user->name }}</td>
-                                        <td>{{ $tindakan->pemeriksaan->user->name }}</td>
+                                        <td>{{ $tindakan->pemeriksaan->laporan->user->name }}</td>
                                         <td>{{ \Carbon\Carbon::parse($tindakan->tgl_tindakan)->translatedFormat('d F Y') }}</td>
                                         <td>{{ $tindakan->ket_tindakan }}</td>
                                         <td>

@@ -7,19 +7,7 @@
             font-family: 'Open Sans', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f7f7f7;
             color: #333;
-        }
-
-        .container {
-            width: 90%;
-            max-width: 1200px;
-            margin: 20px auto;
-            background-color: #fff;
-            padding: 20px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-            border-radius: 15px;
-            overflow-x: auto; /* Untuk memastikan kontainer dapat menggulir jika konten terlalu lebar */
         }
 
         .header {
@@ -47,14 +35,10 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
-            overflow: hidden;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-            border-radius: 15px;
         }
 
         th,
         td {
-            border: none;
             padding: 12px; /* Mengurangi padding untuk memastikan tidak melebihi batas */
             text-align: center;
             font-size: 12px;
@@ -85,36 +69,34 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <img src="{{ public_path('assets/img/kop_surat.jpg') }}" alt="Kop Surat">
-        </div>
-        <h1>Laporan Jumantik</h1>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Nama Petugas</th>
-                    <th>Siklus</th>
-                    <th>Jumlah Rumah Warga yang Diperiksa</th>
-                    <th>Jumlah Rumah Positif Jentik</th>
-                    <th>ABJ (Angka Bebas Jentik)</th>
-                    <th>Kategori</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($summaryData as $item)
-                <tr>
-                    <td>{{ $item['nama_petugas'] }}</td>
-                    <td>{{ $item['siklus'] }}</td>
-                    <td>{{ $item['uniqueBuildingsCount'] }}</td>
-                    <td>{{ $item['positiveLarvaeCount'] }}</td>
-                    <td>{{ number_format($item['abj'], 2) }}%</td>
-                    <td>{{ $item['kategori'] }}</td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
+    <div class="header">
+        <img src="{{ public_path('assets/img/kopsurat.jpg') }}" alt="Kop Surat">
     </div>
+    <h1>Laporan Jumantik</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Nama Petugas</th>
+                <th>Siklus</th>
+                <th>Jumlah Rumah Warga yang Diperiksa</th>
+                <th>Jumlah Rumah Positif Jentik</th>
+                <th>ABJ (Angka Bebas Jentik)</th>
+                <th>Kategori</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($summaryData as $item)
+            <tr>
+                <td>{{ $item['nama_petugas'] }}</td>
+                <td>{{ $item['siklus'] }}</td>
+                <td>{{ $item['uniqueBuildingsCount'] }}</td>
+                <td>{{ $item['positiveLarvaeCount'] }}</td>
+                <td>{{ number_format($item['abj'], 2) }}%</td>
+                <td>{{ $item['kategori'] }}</td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
 </body>
 </html>

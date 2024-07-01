@@ -18,7 +18,7 @@ return new class extends Migration
             $table->date('tgl_laporan');
             $table->string('ket_laporan');
             $table->string('bukti_laporan');
-            $table->enum('status_laporan', ['proses', 'tindaklanjut jumantik', 'tindaklanjut puskesmas', 'selesai', 'ditolak']);
+            $table->enum('status_laporan', ['proses', 'tindaklanjut jumantik', 'tindaklanjut puskesmas', 'selesai', 'ditolak','belum diproses']);
             $table->timestamps();
         });
     }

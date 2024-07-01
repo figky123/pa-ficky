@@ -2,25 +2,19 @@
 <html lang="en">
 
 <head>
-
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-
     <title>Register - Registrasi Akun</title>
-
     <!-- Custom fonts for this template-->
     <link href="{{ asset('/assets/vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
-
     <!-- Custom styles for this template-->
     <link href="{{ asset('/assets/css/sb-admin-2.min.css') }}" rel="stylesheet">
-
     <!-- Bootstrap CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
-
     <style>
         .bg-gradient-primary {
             background: linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(9, 9, 121, 1) 35%, rgba(0, 212, 255, 1) 100%);
@@ -71,11 +65,19 @@
         }
     </style>
 </head>
-
 <body class="bg-gradient-primary">
-
+    @if(\Session::has('success'))
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Akun Berhasil Ditambahkan',
+            showConfirmButton: false,
+            timer: 1500
+        });
+    </script>
+    @endif
     <div class="container">
-
         <div class="card o-hidden border-0 shadow-lg">
             <div class="row g-0">
                 <div class="col-lg-6 d-none d-lg-block">
@@ -136,10 +138,7 @@
                 </div>
             </div>
         </div>
-
     </div>
-
-
     <!-- Bootstrap core JavaScript-->
     <script src="{{ asset('/assets/vendor/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('/assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>

@@ -11,7 +11,7 @@ use App\Models\warga;
 use App\Models\user;
 use App\Models\DB;
 use Illuminate\Support\Facades\DB as FacadesDB;
-use App\Mail\LaporanBaru;
+use App\Mail\LaporanMail;
 use Illuminate\Support\Facades\Mail;
 
 class LaporanController extends Controller
@@ -37,6 +37,11 @@ class LaporanController extends Controller
             'laporans' => laporan::latest()->get(),
             'users' => user::latest()->get()
         ]);
+    }
+
+    public function kirimLaporan($laporan)
+    {
+        Mail::to('admlurah@gmail.com')->send(new LaporanMail($laporan));
     }
 
     /**
@@ -67,13 +72,13 @@ class LaporanController extends Controller
             $laporan = new laporan();
             $laporan->id_user = $request->id_user;
             $laporan->tgl_laporan = $request->tgl_laporan;
-            $laporan->status_laporan = 'proses'; // Nilai tetap
+            $laporan->status_laporan = 'belum diproses'; // Nilai tetap
             $laporan->ket_laporan = $request->ket_laporan;
             $laporan->bukti_laporan = $file_name;
             $laporan->save();
 
             // Kirim email ke admin
-            Mail::to('admlurah@gmail.com')->send(new LaporanBaru($laporan));
+            $this->kirimLaporan($laporan);
 
 
             // Jika berhasil disimpan, kembalikan respons
@@ -83,14 +88,14 @@ class LaporanController extends Controller
             return response()->json(['success' => false, 'message' => 'Terjadi kesalahan: ' . $e->getMessage()], 500);
         }
     }
-        public function updateStatus($id, Request $request)
+    public function updateStatus($id, Request $request)
     {
         $laporan = Laporan::find($id);
 
         if ($laporan) {
             // Optionally validate the status input
             $request->validate([
-                'status_laporan' => 'required|string|in:proses,tindaklanjut jumantik,tindaklanjut puskesmas,selesai,ditolak'
+                'status_laporan' => 'required|string|in:belum diproses,proses,tindaklanjut jumantik,tindaklanjut puskesmas,selesai,ditolak'
             ]);
             $laporan->status_laporan = $request->status_laporan;
             $laporan->save();

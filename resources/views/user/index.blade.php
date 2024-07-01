@@ -31,9 +31,10 @@
                 <div class="row">
                     <!-- Jumlah Warga Card -->
                     <div class="col-xl-3 col-md-6 mb-4">
-                        <div class="card info-card inspection-card animate__animated animate__fadeInUp" style="background-color: #f8f9fa; border-color: #e9ecef;">
+                        <div class="card info-card inspection-card animate__animated animate__fadeInUp" 
+                        style=" border-color: #e9ecef; height: 205px; ">
                             <div class="card-body">
-                                <h5 class="card-title">Total Warga</h5>
+                                <h5 style="height: 75px;" class="card-title">Total Warga</h5>
                                 <div class="d-flex align-items-center">
                                     <div class="card-icon rounded-circle d-flex align-items-center justify-content-center" style="background-color: #ffc107;">
                                         <i class="bi bi-person-fill" style="color: white; font-size: 24px;"></i>
@@ -47,7 +48,7 @@
                     </div><!-- End Jumlah Warga Card -->
                     <!-- Jumlah Laporan Warga Card -->
                     <div class="col-xl-3 col-md-6 mb-4">
-                        <div class="card info-card inspection-card animate__animated animate__fadeInUp" style="background-color: #f8f9fa; border-color: #e9ecef;">
+                        <div class="card info-card inspection-card animate__animated animate__fadeInUp" style="border-color: #e9ecef; height: 205px; ">
                             <div class="card-body">
                                 <h5 class="card-title">Total Laporan Warga</h5>
                                 <div class="d-flex align-items-center">
@@ -65,13 +66,13 @@
                     <div class="col-xl-3 col-md-6 mb-4">
                         <div class="card info-card inspection-card animate__animated animate__fadeInUp">
                             <div class="card-body">
-                                <h5 class="card-title">Total Laporan Warga yang Sudah Ditindak Jumantik</h5>
+                                <h5 class="card-title">Laporan Warga yang Sudah Ditindak Jumantik</h5>
                                 <div class="d-flex align-items-center">
                                     <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
                                         <i class="bi bi-check-circle"></i> <!-- Ikon Rumah -->
                                     </div>
                                     <div class="ps-3">
-                                        <h6 class="total-value">{{ $total }}</h6>
+                                        <h6 class="total-value">{{ $totalRumahSudahDiperiksa }}</h6>
                                     </div>
                                 </div>
                             </div>
@@ -80,9 +81,9 @@
 
                     <!-- Total Rumah yang Belum Diperiksa Card -->
                     <div class="col-xl-3 col-md-6 mb-4">
-                        <div class="card info-card inspection-card animate__animated animate__fadeInUp" style="background-color: #f8f9fa; border-color: #e9ecef;">
+                        <div class="card info-card inspection-card animate__animated animate__fadeInUp" style="border-color: #e9ecef;">
                             <div class="card-body">
-                                <h5 class="card-title">Total Laporan Warga yang Belum Ditindak Jumantik</h5>
+                                <h5 class="card-title">Laporan Warga yang Belum Ditindak Jumantik</h5>
                                 <div class="d-flex align-items-center">
                                     <div class="card-icon rounded-circle d-flex align-items-center justify-content-center" style="background-color: #dc3545;">
                                         <i class="bi bi-hourglass-bottom" style="color: white; font-size: 24px;"></i> <!-- Ganti dengan ikon lain -->
@@ -95,9 +96,9 @@
                         </div>
                     </div><!-- End Total Rumah yang Belum Diperiksa Card -->
                     <div class="col-xl-3 col-md-6 mb-4">
-                        <div class="card info-card inspection-card animate__animated animate__fadeInUp" style="background-color: #f8d7da; border-color: #f5c6cb;">
+                        <div class="card info-card inspection-card animate__animated animate__fadeInUp" style="border-color: #f5c6cb;height: 225px;">
                             <div class="card-body">
-                                <h5 class="card-title">Total Rumah Positif Jentik</h5>
+                                <h5 class="card-title">Rumah Positif Jentik</h5>
                                 <div class="d-flex align-items-center">
                                     <div class="card-icon rounded-circle d-flex align-items-center justify-content-center" style="background-color: #dc3545;">
                                         <i class="bi bi-plus-circle" style="color: white; font-size: 24px;"></i>
@@ -110,9 +111,9 @@
                         </div>
                     </div>
                     <div class="col-xl-3 col-md-6 mb-4">
-                        <div class="card info-card inspection-card animate__animated animate__fadeInUp" style="background-color: #d4edda; border-color: #c3e6cb;">
+                        <div class="card info-card inspection-card animate__animated animate__fadeInUp" style="border-color: #c3e6cb;height: 225px; ">
                             <div class="card-body">
-                                <h5 class="card-title">Total Rumah Negatif Jentik</h5>
+                                <h5 class="card-title">Rumah Negatif Jentik</h5>
                                 <div class="d-flex align-items-center">
                                     <div class="card-icon rounded-circle d-flex align-items-center justify-content-center" style="background-color: #28a745;">
                                         <i class="bi bi-dash-circle" style="color: white; font-size: 24px;"></i>
@@ -128,7 +129,7 @@
                     <div class="col-xl-3 col-md-6 mb-4">
                         <div class="card info-card inspection-card animate__animated animate__fadeInUp">
                             <div class="card-body">
-                                <h5 class="card-title">Total Laporan Jumantik yang Sudah Ditindak Puskesmas</h5>
+                                <h5 class="card-title">Laporan Jumantik yang Sudah Ditindak Puskesmas</h5>
                                 <div class="d-flex align-items-center">
                                     <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
                                         <i class="bi bi-check-circle"></i> <!-- Ikon Tindakan -->
@@ -143,9 +144,9 @@
 
                     <!-- Total Laporan yang Belum Ditindak Card -->
                     <div class="col-xl-3 col-md-6 mb-4">
-                        <div class="card info-card inspection-card animate__animated animate__fadeInUp" style="background-color: #f8f9fa; border-color: #e9ecef;">
+                        <div class="card info-card inspection-card animate__animated animate__fadeInUp" style="border-color: #e9ecef;">
                             <div class="card-body">
-                                <h5 class="card-title">Total Laporan Jumantik Yang Belum Ditindak Puskesmas</h5>
+                                <h5 class="card-title">Laporan Jumantik Yang Belum Ditindak Puskesmas</h5>
                                 <div class="d-flex align-items-center">
                                     <div class="card-icon rounded-circle d-flex align-items-center justify-content-center animate__animated animate__rotate" style="background-color: #dc3545;">
                                         <i class="bi bi-hourglass-bottom" style="color: white; font-size: 24px;"></i> <!-- Ikon Hourglass -->

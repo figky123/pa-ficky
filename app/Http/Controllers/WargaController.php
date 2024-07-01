@@ -9,7 +9,7 @@ class WargaController extends Controller
 {
     public function index()
     {
-        $users = user::where('role', 'Warga')->paginate(10);
-        return view('user.table_warga', ['users' => $users]);
+        $users = user::latest()->paginate(100);
+        return view('user.table_warga', compact('users'));
     }
 }

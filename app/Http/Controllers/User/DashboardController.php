@@ -19,7 +19,7 @@ class DashboardController extends Controller
         $totalWarga = User::where('role', 'Warga')->count('id');
 
         // Menghitung total bangunan yang sudah diperiksa
-        $total = Pemeriksaan::count('id');
+        $totalRumahSudahDiperiksa = Pemeriksaan::count('id');
 
         // Menghitung total laporan yang belum diperiksa
         $totalRumahBelumDiperiksa = Laporan::leftJoin('pemeriksaans', 'laporans.id', '=', 'pemeriksaans.id_laporan')
@@ -87,7 +87,7 @@ class DashboardController extends Controller
         // Mengirimkan nilai total ke view 'pegawai.index'
         return view('user.index', [
             'totalWarga' => $totalWarga,
-            'total' => $total,
+            'totalRumahSudahDiperiksa' => $totalRumahSudahDiperiksa,
             'totalRumahBelumDiperiksa' => $totalRumahBelumDiperiksa,
             'jumlahStatusJentikPositif' => $jumlahStatusJentikPositif,
             'jumlahStatusJentikNegatif' => $jumlahStatusJentikNegatif,

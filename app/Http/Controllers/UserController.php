@@ -74,9 +74,7 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        return view('user.edit', [
-            'User' => $user
-        ]);
+      
     }
 
     /**
@@ -86,29 +84,7 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
-    {
-        $user = User::where('id',$id);
-        $validator = Validator::make($request->all(), [
-            'name' => 'string',
-            'email' => 'email',
-            'password' => 'string',
-            'role' => 'string',
-        ]);
-
-        if ($validator->fails()){
-            return response()->json($validator->errors(), 422);
-        }
-
-            $user->update([
-                'name' => $request->name,
-                'email' => $request->email,
-                'password' => $request->password,
-                'role'=> $request->role,
-            ]);
-        
-        return new UserResources(true, 'Data Admin Berhasil Diubah!', $user);
-    }
+    
 
     /**
      * Remove the specified resource from storage.

@@ -26,7 +26,7 @@
   </div><!-- End Page Title -->
   <section class="section">
     @if(Auth::check() && Auth::user()->hasRole('Warga'))
-    <button id="btnTambahData" class="btn btn-primary" data-toggle="modal" data-target="#tambahDataModal">Tambah Data</button>
+    <button id="btnTambahData" class="btn btn-primary mb-3" data-toggle="modal" data-target="#tambahDataModal">Tambah Data</button>
     @endif
     <div class="row">
       <div class="col-lg-12">
@@ -46,7 +46,7 @@
                     <th>Status Laporan</th>
                     <th>Keterangan Laporan</th>
                     <th>Bukti Laporan</th>
-                    
+
                   </tr>
                 </thead>
                 <tbody id="table-users">
@@ -69,15 +69,30 @@
                     <td>{{ $laporan->user ? $laporan->user->RW : 'N/A' }}</td>
                     <td>{{ \Carbon\Carbon::parse($laporan->tgl_laporan)->translatedFormat('d F Y') }}</td>
                     <td>
-                      @if(in_array(Auth::user()->role, ['Puskesmas', 'Lurah', 'Jumantik','Admin']))
-                      <!-- Tampilkan dropdown select untuk kolom tindakan yang dapat diubah oleh puskesmas, lurah, atau jumantik -->
+                      @if(in_array(Auth::user()->role, ['Puskesmas', 'Jumantik', 'Admin', 'Lurah']))
+                      @if(Auth::user()->role == 'Jumantik')
+                      <!-- Tampilkan dropdown select dengan opsi terbatas untuk Jumantik -->
                       <select class="form-control status-dropdown" data-id="{{ $laporan->id }}">
+                        <option value="proses" {{ $laporan->status_laporan == 'proses' ? 'selected' : '' }}>Proses</option>
+                        <option value="tindaklanjut jumantik" {{ $laporan->status_laporan == 'tindaklanjut jumantik' ? 'selected' : '' }}>Tindaklanjut Jumantik</option>
+                      </select>
+                      @elseif(Auth::user()->role == 'Puskesmas')
+                      <!-- Tampilkan dropdown select dengan opsi terbatas untuk Puskesmas -->
+                      <select class="form-control status-dropdown" data-id="{{ $laporan->id }}">
+                        <option value="tindaklanjut jumantik" {{ $laporan->status_laporan == 'tindaklanjut jumantik' ? 'selected' : '' }}>Tindaklanjut Jumantik</option>
+                        <option value="tindaklanjut puskesmas" {{ $laporan->status_laporan == 'tindaklanjut puskesmas' ? 'selected' : '' }}>Tindaklanjut Puskesmas</option>
+                      </select>
+                      @else
+                      <!-- Tampilkan dropdown select lengkap untuk Admin dan Lurah -->
+                      <select class="form-control status-dropdown" data-id="{{ $laporan->id }}">
+                        <option value="belum diproses" {{ $laporan->status_laporan == 'belum diproses' ? 'selected' : '' }}>Belum Diproses</option>
                         <option value="proses" {{ $laporan->status_laporan == 'proses' ? 'selected' : '' }}>Proses</option>
                         <option value="tindaklanjut jumantik" {{ $laporan->status_laporan == 'tindaklanjut jumantik' ? 'selected' : '' }}>Tindaklanjut Jumantik</option>
                         <option value="tindaklanjut puskesmas" {{ $laporan->status_laporan == 'tindaklanjut puskesmas' ? 'selected' : '' }}>Tindaklanjut Puskesmas</option>
                         <option value="selesai" {{ $laporan->status_laporan == 'selesai' ? 'selected' : '' }}>Selesai</option>
                         <option value="ditolak" {{ $laporan->status_laporan == 'ditolak' ? 'selected' : '' }}>Ditolak</option>
                       </select>
+                      @endif
                       @else
                       <!-- Tampilkan teks statis untuk kolom tindakan yang tidak dapat diubah oleh non-puskesmas, non-lurah, atau non-jumantik -->
                       {{ $laporan->status_laporan }}
@@ -227,7 +242,7 @@
       var imageUrl = $(this).data('image');
       var createdAt = $(this).data('created-at');
       $('#modalImage').attr('src', imageUrl);
-      $('#createdAtText').text('Created at: ' + formatDate(createdAt));
+      $('#createdAtText').text('Waktu Laporan: ' + new Date(createdAt).toLocaleString());
     });
 
     // Handling the status change
