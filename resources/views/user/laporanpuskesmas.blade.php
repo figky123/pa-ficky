@@ -11,11 +11,10 @@
 <!-- SweetAlert2 -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-
 @section('content')
 <main id="main" class="main">
     <div class="pagetitle">
-        <h1>Data Laporan Puskesmas</h1>
+        <h1>Laporan Puskesmas</h1>
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="index.html">Home</a></li>
@@ -25,6 +24,7 @@
         </nav>
     </div><!-- End Page Title -->
     <section class="section">
+        <!-- Tambah Data Button -->
         @if(Auth::check() && Auth::user()->hasRole('Puskesmas'))
         <button id="btnTambahData" class="btn btn-primary mb-3" data-toggle="modal" data-target="#tambahDataModal">Tambah Data</button>
         @endif
@@ -32,34 +32,24 @@
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Data Laporan Puskesmas</h5>
-
-                        <!-- Table with stripped rows -->
+                        <h5 class="card-title">Laporan Puskesmas</h5>
                         <div class="table-responsive">
                             <table class="table datatable">
                                 <thead>
                                     <tr>
                                         <th>Nama Petugas</th>
-                                        <th>Nama Warga</th>
-                                        <th>Tanggal</th>
+                                        <th>RW</th>
+                                        <th>Tanggal Tindakan</th>
                                         <th>Keterangan</th>
                                         <th>Bukti</th>
-                                        <th>Tindakan</th>
-                                        <th>Status</th>
                                     </tr>
                                 </thead>
-                                <tbody id="table-users">
-                                    @php
-                                    $loggedInUser = Auth::user();
-                                    $userTindakans = App\Models\Tindakan::query();
-                                    $userTindakans = $userTindakans->get();
-                                    @endphp
-
-                                    @foreach($userTindakans as $tindakan)
+                                <tbody>
+                                    @foreach($tindakans as $tindakan)
                                     <tr>
-                                        <td>{{ $tindakan->user->name }}</td>
-                                        <td>{{ $tindakan->pemeriksaan->laporan->user->name }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($tindakan->tgl_tindakan)->translatedFormat('d F Y') }}</td>
+                                        <td>{{ $tindakan->nama_petugas }}</td>
+                                        <td>{{ $tindakan->RW }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($tindakan->tgl_tindakan)->translatedFormat('j F Y') }}</td>
                                         <td>{{ $tindakan->ket_tindakan }}</td>
                                         <td>
                                             @if($tindakan->bukti_tindakan)
@@ -70,34 +60,30 @@
                                             Tidak ada bukti
                                             @endif
                                         </td>
-                                        <td>{{ $tindakan->aksi_tindakan }}</td>
-                                        <td>{{ $tindakan->status_tindakan }}</td>
                                     </tr>
                                     @endforeach
                                 </tbody>
                             </table>
-                        </div>
-                        <!-- End Table with stripped rows -->
-
+                        </div><!-- End Table with stripped rows -->
+                        <!-- Keterangan di atas tabel -->
                     </div>
                 </div>
             </div>
         </div>
     </section>
 </main><!-- End #main -->
-
 <!-- Image Modal -->
 <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="imageModalLabel">Bukti Tindakan</h5>
+                <h5 class="modal-title" id="imageModalLabel">Bukti tindakan</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body text-center">
-                <img id="modalImage" width="50%" height="50%" src="" alt="Bukti Tindakan" class="img-fluid">
+                <img id="modalImage" width="50%" height="50%" src="" alt="Bukti tindakan" class="img-fluid">
                 <p id="createdAtText" class="mt-3"></p>
             </div>
         </div>
@@ -105,57 +91,42 @@
 </div>
 <!-- Tambah Data Modal -->
 <div class="modal fade" id="tambahDataModal" tabindex="-1" role="dialog" aria-labelledby="tambahDataModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="tambahDataModalLabel">Tambah Data</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="tambahDataModalLabel">Tambah Data tindakan</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
+            <!-- Form Tambah Data -->
             <div class="modal-body">
                 <form id="formTambahData" method="post" action="{{ route('tindakan.store') }}" enctype="multipart/form-data">
                     @csrf
                     <div class="form-group">
-                        <input type="hidden" id="id_user" name="id_user" class="form-control" value="{{ Auth::user()->id }}" readonly>
+                        <label for="nama_petugas">Nama Petugas</label>
+                        <input type="text" class="form-control" id="nama_petugas" name="nama_petugas" placeholder="Masukkan Nama Petugas" required>
                     </div>
                     <div class="form-group">
-                        <label for="name">Nama Petugas</label>
-                        <input type="text" id="name" name="name" class="form-control" value="{{ Auth::user()->name }}" readonly>
+                        <label for="RW">RW</label>
+                        <input type="text" class="form-control" id="RW" name="RW" placeholder="Masukkan RW" required>
                     </div>
                     <div class="form-group">
-                        <label for="id_pemeriksaan">Pemeriksaan<span class="text-danger">*</span></label>
-                        <select class="form-control" id="id_pemeriksaan" name="id_pemeriksaan" required>
-                            @foreach(App\Models\Pemeriksaan::all() as $pemeriksaan)
-                            <option value="{{ $pemeriksaan->id }}">{{ $pemeriksaan->user->name }}</option>
-                            @endforeach
-                        </select>
+                        <label for="tgl_tindakan">Tanggal tindakan</label>
+                        <input type="date" id="tgl_tindakan" name="tgl_tindakan" class="form-control" required>
                     </div>
                     <div class="form-group">
-                        <label for="tgl_tindakan">Tanggal Tindakan <span class="text-danger">*</span></label>
-                        <input type="date" class="form-control" id="tgl_tindakan" name="tgl_tindakan" required>
+                        <label for="ket_tindakan">Keterangan tindakan</label>
+                        <input type="text" id="ket_tindakan" name="ket_tindakan" class="form-control" required>
                     </div>
                     <div class="form-group">
-                        <label for="ket_tindakan">Keterangan Tindakan <span class="text-danger">*</span></label>
-                        <textarea id="ket_tindakan" name="ket_tindakan" class="form-control" rows="3" required></textarea>
+                        <label for="bukti_tindakan">Bukti tindakan</label>
+                        <input type="file" name="bukti_tindakan" id="bukti_tindakan" class="form-control">
                     </div>
-                    <div class="form-group">
-                        <label for="bukti_tindakan">Bukti Tindakan <span class="text-danger">*</span></label>
-                        <input type="file" class="form-control" id="bukti_tindakan" name="bukti_tindakan" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="aksi_tindakan">Tindakan</label>
-                        <select class="form-control" id="aksi_tindakan" name="aksi_tindakan" required>
-                            <option value="fogging">Fogging</option>
-                            <option value="penyuluhan">Penyuluhan</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="status_tindakan">Status Tindakan</label>
-                        <input type="text" id="status_tindakan" name="status_tindakan" class="form-control" value="sudah ditindak" readonly>
-                    </div>
-                    <div class="form-group">
+                    <!-- Add other fields as necessary -->
+                    <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">Tambah Data</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
                     </div>
                 </form>
             </div>
@@ -163,13 +134,30 @@
     </div>
 </div>
 
+<!-- Modal View Image -->
+<div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="imageModalLabel">Bukti Laporan</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <img id="modalImage" src="" alt="Bukti Laporan" class="img-fluid">
+                <p id="createdAtText"></p>
+            </div>
+        </div>
+    </div>
+</div>
 <script>
     $(document).ready(function() {
         $('.view-image-btn').on('click', function() {
             var imageUrl = $(this).data('image');
             var createdAt = $(this).data('created-at');
             $('#modalImage').attr('src', imageUrl);
-            $('#createdAtText').text('Waktu Tindakan: ' + new Date(createdAt).toLocaleString());
+            $('#createdAtText').text('Waktu tindakan: ' + new Date(createdAt).toLocaleString());
         });
 
         // Modal tambah data

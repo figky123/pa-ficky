@@ -3,15 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Request\StorepemeriksaanRequest;
+use Illuminate\Support\Facades\Mail;
 use App\Http\Request\UpdatepemeriksaanRequest;
 use App\Models\laporan;
 use App\Models\user;
 use App\Models\pemeriksaan;
-use Illuminate\Support\Facades\Validator;
-use App\Http\Resources\PemeriksaanResource;
-use Illuminate\Support\Facades\Storage;
-use Symfony\Component\HttpFoundation\RequestStack;
+use App\Mail\PemeriksaanNotification;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Carbon;
 
 
@@ -22,7 +20,19 @@ class PemeriksaanController extends Controller
      */
     public function index()
     {
-        $pemeriksaans = pemeriksaan::with('laporan.user')->latest()->paginate(100);
+        $loggedInUser = Auth::user();
+        $pemeriksaansQuery = Pemeriksaan::with('user');
+
+        if ($loggedInUser->hasRole('Warga')) {
+            $pemeriksaansQuery->where('id_user', $loggedInUser->id);
+        } elseif ($loggedInUser->hasRole('RT')) {
+            $pemeriksaansQuery->whereHas('user', function ($query) use ($loggedInUser) {
+                $query->where('RT', $loggedInUser->RT);
+            });
+        }
+
+        $pemeriksaans = $pemeriksaansQuery->orderBy('tgl_pemeriksaan', 'asc')->paginate(100);
+
         return view('user.laporan_jumantik1', compact('pemeriksaans'));
     }
 
@@ -47,71 +57,78 @@ class PemeriksaanController extends Controller
     {
         // Validasi input
         $validatedData = $request->validate([
-            'id_laporan' => 'required|integer|exists:laporans,id', // Add exists validation
-            'id_user' => 'required|integer',
+            'id_user' => 'required|integer|exists:users,id',
+            'nama_pemeriksa' => 'required|string|max:255',
+            'tgl_pemeriksaan' => 'required|date',
             'siklus' => 'required|integer',
-            'kaleng_bekas' => 'required|integer|in: 1,0,-1',
-            'pecahan_botol' => 'required|integer|in: 1,0,-1',
-            'ban_bekas' => 'required|integer|in: 1,0,-1',
-            'tempayan' => 'required|integer|in: 1,0,-1',
-            'bak_mandi' => 'required|integer|in: 1,0,-1',
-            'lain_lain' => 'required|integer|in:1,0,-1',
+            'kaleng_bekas' => 'required|integer|in:1,0,-1',
+            'ember' => 'required|integer|in:1,0,-1',
+            'ban_bekas' => 'required|integer|in:1,0,-1',
+            'vas_bunga' => 'required|integer|in:1,0,-1',
+            'bak_mandi' => 'required|integer|in:1,0,-1',
+            'lainnya_dalam' => 'required|integer|in:1,0,-1',
+            'lainnya_luar' => 'required|integer|in:1,0,-1',
             'bukti_pemeriksaan' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'ket_pemeriksaan' => 'required|string|max:255',
         ]);
 
-        // Tentukan nilai kolom boolean sebagai integer
-        $kaleng_bekas_value = $request->input('kaleng_bekas');
-        $pecahan_botol_value = $request->input('pecahan_botol');
-        $ban_bekas_value = $request->input('ban_bekas');
-        $tempayan_value = $request->input('tempayan');
-        $bak_mandi_value = $request->input('bak_mandi');
-        $lain_lain_value = $request->input('lain_lain');
+        // Retrieve and process boolean values
+        $keys = ['kaleng_bekas', 'ember', 'ban_bekas', 'vas_bunga', 'bak_mandi', 'lainnya_dalam', 'lainnya_luar'];
+        $values = array_map(fn ($key) => $request->input($key), $keys);
 
+        // Hitung penjumlahan nilai, abaikan nilai -1
+        $sum = array_sum(array_filter($values, fn ($value) => $value != -1));
 
-        $bukti_pemeriksaan = $request->file('bukti_pemeriksaan');
-        $file_ext = pathinfo($bukti_pemeriksaan->getClientOriginalName(), PATHINFO_EXTENSION);
-        $file_name = 'bukti_pemeriksaan_' . date('YmdHi') . '.' . $file_ext;
-        $bukti_pemeriksaan->move(public_path('storage/bukti_pemeriksaan'), $file_name);
+        // Tentukan status_jentik berdasarkan hasil penjumlahan
+        $status_jentik = $sum > 0 ? 'positif' : 'negatif';
+
+        // Handle file upload with try-catch
+        try {
+            $bukti_pemeriksaan = $request->file('bukti_pemeriksaan');
+            $file_name = 'bukti_pemeriksaan_' . date('YmdHi') . '.' . $bukti_pemeriksaan->getClientOriginalExtension();
+            $bukti_pemeriksaan->move(public_path('storage/bukti_pemeriksaan'), $file_name);
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['bukti_pemeriksaan' => 'File upload failed: ' . $e->getMessage()]);
+        }
 
         // Simpan ke database
         $pemeriksaan = new Pemeriksaan();
-        $pemeriksaan->id_laporan = $validatedData['id_laporan'];
+        $pemeriksaan->nama_pemeriksa = $validatedData['nama_pemeriksa'];
         $pemeriksaan->id_user = $validatedData['id_user'];
         $pemeriksaan->siklus = $validatedData['siklus'];
-        $pemeriksaan->kaleng_bekas = $kaleng_bekas_value;
-        $pemeriksaan->pecahan_botol = $pecahan_botol_value;
-        $pemeriksaan->ban_bekas = $ban_bekas_value;
-        $pemeriksaan->tempayan = $tempayan_value;
-        $pemeriksaan->bak_mandi = $bak_mandi_value;
-        $pemeriksaan->lain_lain = $lain_lain_value;
         $pemeriksaan->bukti_pemeriksaan = $file_name;
+        $pemeriksaan->tgl_pemeriksaan = $validatedData['tgl_pemeriksaan'];
+        foreach ($keys as $key) {
+            $pemeriksaan->$key = $request->input($key);
+        }
+        $pemeriksaan->status_jentik = $status_jentik;
         $pemeriksaan->ket_pemeriksaan = $validatedData['ket_pemeriksaan'];
 
         $pemeriksaan->save();
 
-        // Hitung jumlah yang bernilai 1 dan 0
-        $jumlah_1 = ($kaleng_bekas_value == 1 ? 1 : 0) +
-            ($pecahan_botol_value == 1 ? 1 : 0) +
-            ($ban_bekas_value == 1 ? 1 : 0) +
-            ($tempayan_value == 1 ? 1 : 0) +
-            ($bak_mandi_value == 1 ? 1 : 0) +
-            ($lain_lain_value == 1 ? 1 : 0);
+        // Retrieve user data
+        $user = User::find($validatedData['id_user']);
+        $RT = $user->RT;
+        $RW = $user->RW;
+        $alamat = $user->alamat;
 
-        $jumlah_0 = ($kaleng_bekas_value == 0 ? 1 : 0) +
-            ($pecahan_botol_value == 0 ? 1 : 0) +
-            ($ban_bekas_value == 0 ? 1 : 0) +
-            ($tempayan_value == 0 ? 1 : 0) +
-            ($bak_mandi_value == 0 ? 1 : 0) +
-            ($lain_lain_value == 0 ? 1 : 0);
+        // Send email notification if siklus is 4 and status_jentik is positif
+        if ($pemeriksaan->siklus == 4 && $pemeriksaan->status_jentik == 'positif') {
+            $data = [
+                'nama_pemeriksa' => $pemeriksaan->nama_pemeriksa,
+                'tgl_pemeriksaan' => $pemeriksaan->tgl_pemeriksaan,
+                'siklus' => $pemeriksaan->siklus,
+                'status_jentik' => $pemeriksaan->status_jentik,
+                'RT' => $RT,
+                'RW' => $RW,
+                'alamat' => $alamat,
+            ];
+            Mail::to('admlurah@gmail.com')->send(new PemeriksaanNotification($data));
+        }
 
-        // Jumlah total nilai 1 dan 0
-        $jumlah = $jumlah_1 + $jumlah_0;
-
-        // Redirect ke halaman index atau halaman lainnya dengan pesan sukses
-        return redirect()->back()->with('success', 'Data berhasil ditambahkan')->with('jumlah', $jumlah);
+        return redirect()->route('pemeriksaans')
+            ->with('success', 'Data pemeriksaan berhasil disimpan.');
     }
-
     public function updateStatus(Request $request)
     {
         try {

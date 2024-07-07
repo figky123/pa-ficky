@@ -17,10 +17,9 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-         public function index()
+    public function index()
     {
-        
-        $users = user::latest()->paginate(100);
+        $users = User::whereIn('role', ['Puskesmas', 'RT', 'RW'])->latest()->paginate(100);
         return view('user.table_petugas', compact('users'));
     }
 
@@ -29,7 +28,6 @@ class UserController extends Controller
      */
     public function create()
     {
-     
     }
 
     /**
@@ -57,8 +55,6 @@ class UserController extends Controller
         ]);
 
         return new UserResources(true, 'Data User Berhasil Ditambahkan!', $user);
-
-
     }
 
     /**
@@ -74,7 +70,6 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-      
     }
 
     /**
@@ -84,7 +79,7 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    
+
 
     /**
      * Remove the specified resource from storage.

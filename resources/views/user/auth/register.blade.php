@@ -121,7 +121,8 @@
                                     <select name="role">
                                         <option value="" disabled selected>Pilih Role</option>
                                         <option value="Warga">Warga</option>
-                                        <option value="Jumantik">Jumantik</option>
+                                        <option value="RT">RT</option>
+                                        <option value="RW">RW</option>
                                         <option value="Puskesmas">Puskesmas</option>
                                     </select>
                                 </div>

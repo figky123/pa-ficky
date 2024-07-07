@@ -3,10 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\pemeriksaan;
-use App\Models\laporan;
+use App\Models\tindakan;
 use App\Models\user;
 use Illuminate\Support\Facades\Auth;
-use App\Models\tindakan;
 use Illuminate\Http\Request;
 
 class TindakanController extends Controller
@@ -15,9 +14,10 @@ class TindakanController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    { {
-            $tindakans = tindakan::with('pemeriksaan.laporan.user')->latest()->paginate(100);
-            return view('user.laporan_puskesmas', compact('tindakans'));
+    { 
+        {
+            $tindakans = Tindakan::orderBy('tgl_tindakan', 'asc')->paginate(100);
+            return view('user.laporanpuskesmas', compact('tindakans'));
         }
     }
 
@@ -35,27 +35,26 @@ class TindakanController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'id_pemeriksaan' => 'required|exists:pemeriksaans,id',
+            'RW' => 'required|string|max:255',
+            'nama_petugas' => 'required|string|max:255',
             'tgl_tindakan' => 'required|date',
+            'ket_tindakan' => 'required|string|max:255',
             'bukti_tindakan' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'aksi_tindakan' => 'required'
         ]);
 
-        $bukti_laporan = $request->file('bukti_tindakan');
-        $file_ext = pathinfo($bukti_laporan->getClientOriginalName(), PATHINFO_EXTENSION);
+        $bukti_tindakan = $request->file('bukti_tindakan');
+        $file_ext = pathinfo($bukti_tindakan->getClientOriginalName(), PATHINFO_EXTENSION);
         $file_name = 'bukti_tindakan_' . date('YmdHi') . '.' . $file_ext;
-        $bukti_laporan->move(public_path('storage/bukti_tindakan'), $file_name);
+        $bukti_tindakan->move(public_path('storage/bukti_tindakan'), $file_name);
 
         try {
             // Simpan data ke dalam database
             $tindakan = new tindakan();
-            $tindakan->id_user = Auth::id();
-            $tindakan->id_pemeriksaan = $request->id_pemeriksaan;
-            $tindakan->tgl_tindakan = $request->tgl_tindakan;
+            $tindakan->RW = $request->RW;
+            $tindakan->nama_petugas = $request->nama_petugas;
             $tindakan->ket_tindakan = $request->ket_tindakan;
             $tindakan->bukti_tindakan = $file_name;
-            $tindakan->aksi_tindakan = $request->aksi_tindakan;
-            $tindakan->status_tindakan = 'sudah ditindak'; // Nilai tetap
+            $tindakan->tgl_tindakan = $request->tgl_tindakan;
             $tindakan->save();
 
 

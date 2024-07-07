@@ -53,19 +53,15 @@
                 <li class="nav-item dropdown pe-3">
                     <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
                         <img src="{{ asset('assets/img/profile-img.jpg') }}" alt="Profile" class="rounded-circle">
-                        <span class="d-none d-md-block dropdown-toggle ps-2">{{ Auth::user()->name }}</span>
+                        <span class="d-none d-md-block dropdown-toggle ps-2">{{ Auth::user()->role }}</span>
                     </a><!-- End Profile Image Icon -->
-
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                         <li class="dropdown-header">
                             <h6>{{ Auth::user()->name }}</h6>
-                            <span>{{ Auth::user()->role }}</span>
                         </li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-
-                    
                         <li>
                             <a class="dropdown-item d-flex align-items-center" href="logout">
                                 <i class="bi bi-box-arrow-right"></i>
@@ -108,21 +104,9 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link collapsed" href="laporan_warga">
+                <a class="nav-link collapsed" href="laporanlurah">
                     <i class="bi bi-file-earmark-text"></i>
-                    <span>Laporan Warga</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="laporan_jumantik1">
-                    <i class="bi bi-file-earmark-text"></i>
-                    <span>Laporan Jumantik 1</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="laporan_jumantik2">
-                    <i class="bi bi-file-earmark-text"></i>
-                    <span>Laporan Jumantik 2</span>
+                    <span>Laporan Lurah</span>
                 </a>
             </li>
             <li class="nav-item">
@@ -139,21 +123,53 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link collapsed" href="laporan_warga">
-                    <i class="bi bi-file-earmark-text"></i>
-                    <span>Laporan Warga</span>
-                </a>
-            </li>
-            <li class="nav-item">
                 <a class="nav-link collapsed" href="laporan_jumantik1">
                     <i class="bi bi-file-earmark-text"></i>
-                    <span>Laporan Jumantik 1</span>
+                    <span>Laporan Jumantik </span>
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link collapsed" href="laporan_puskesmas">
                     <i class="bi bi-file-earmark-text"></i>
                     <span>Laporan Puskesmas</span>
+                </a>
+            </li>
+            @elseif(Auth::user()->role == 'RT')
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="dashboard">
+                    <i class="bi bi-speedometer2"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="laporanRT">
+                    <i class="bi bi-file-earmark-text"></i>
+                    <span>Laporan RT </span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="laporan_jumantik1">
+                    <i class="bi bi-file-earmark-text"></i>
+                    <span>Laporan Jumantik </span>
+                </a>
+            </li>
+            @elseif(Auth::user()->role == 'RW')
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="dashboard">
+                    <i class="bi bi-speedometer2"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="laporanRT">
+                    <i class="bi bi-file-earmark-text"></i>
+                    <span>Laporan RT</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="laporanRW">
+                    <i class="bi bi-file-earmark-text"></i>
+                    <span>Laporan RW</span>
                 </a>
             </li>
             @elseif(Auth::user()->role == 'Admin')
@@ -201,21 +217,21 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link collapsed" href="laporan_warga">
+                <a class="nav-link collapsed" href="laporanRT">
                     <i class="bi bi-file-earmark-text"></i>
-                    <span>Laporan Warga</span>
+                    <span>Laporan RT</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link collapsed" href="laporan_jumantik1">
+                <a class="nav-link collapsed" href="laporanRW">
                     <i class="bi bi-file-earmark-text"></i>
-                    <span>Laporan Jumantik 1</span>
+                    <span>Laporan RW</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link collapsed" href="laporan_jumantik2">
+                <a class="nav-link collapsed" href="laporanlurah">
                     <i class="bi bi-file-earmark-text"></i>
-                    <span>Laporan Jumantik 2</span>
+                    <span>Laporan Lurah</span>
                 </a>
             </li>
             <li class="nav-item">

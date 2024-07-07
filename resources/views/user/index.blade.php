@@ -1,4 +1,5 @@
 @extends('layout.master')
+
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.9.1/font/bootstrap-icons.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
@@ -24,268 +25,134 @@
             </ol>
         </nav>
     </div><!-- End Page Title -->
+
     <section class="section dashboard">
         <div class="row">
             <!-- Left side columns -->
             <div class="col-lg-12">
                 <div class="row">
-                    <!-- Jumlah Warga Card -->
-                    <div class="col-xl-3 col-md-6 mb-4">
-                        <div class="card info-card inspection-card animate__animated animate__fadeInUp" 
-                        style=" border-color: #e9ecef; height: 205px; ">
+                    <!-- Total Warga Card -->
+                    <div class="col-md-4">
+                        <div class="card info-card">
                             <div class="card-body">
-                                <h5 style="height: 75px;" class="card-title">Total Warga</h5>
                                 <div class="d-flex align-items-center">
-                                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center" style="background-color: #ffc107;">
-                                        <i class="bi bi-person-fill" style="color: white; font-size: 24px;"></i>
+                                    <div class="icon bg-primary text-white rounded-circle p-4 mt-4">
+                                        <i class="bi bi-person"></i>
                                     </div>
-                                    <div class="ps-3">
-                                        <h6 style="color: #343a40;">{{ $totalWarga }}</h6>
+                                    <div class="ml-3">
+                                        <h5 class="card-title">Total Warga</h5>
+                                        <h6>{{ $totalWarga }}</h6>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div><!-- End Jumlah Warga Card -->
-                    <!-- Jumlah Laporan Warga Card -->
-                    <div class="col-xl-3 col-md-6 mb-4">
-                        <div class="card info-card inspection-card animate__animated animate__fadeInUp" style="border-color: #e9ecef; height: 205px; ">
-                            <div class="card-body">
-                                <h5 class="card-title">Total Laporan Warga</h5>
-                                <div class="d-flex align-items-center">
-                                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center" style="background-color: #ffc107;">
-                                        <i class="bi bi-file-earmark-text" style="color: white; font-size: 24px;"></i> <!-- Ikon Laporan -->
-                                    </div>
-                                    <div class="ps-3">
-                                        <h6 style="color: #343a40;">{{ $jumlahlaporan }}</h6>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div><!-- End Jumlah Laporan Warga Card -->
-                    <!-- Inspection Card -->
-                    <div class="col-xl-3 col-md-6 mb-4">
-                        <div class="card info-card inspection-card animate__animated animate__fadeInUp">
-                            <div class="card-body">
-                                <h5 class="card-title">Laporan Warga yang Sudah Ditindak Jumantik</h5>
-                                <div class="d-flex align-items-center">
-                                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                        <i class="bi bi-check-circle"></i> <!-- Ikon Rumah -->
-                                    </div>
-                                    <div class="ps-3">
-                                        <h6 class="total-value">{{ $totalRumahSudahDiperiksa }}</h6>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div><!-- End Total Rumah Yang Sudah Diperiksa Card -->
+                    </div><!-- End Total Warga Card -->
 
-                    <!-- Total Rumah yang Belum Diperiksa Card -->
-                    <div class="col-xl-3 col-md-6 mb-4">
-                        <div class="card info-card inspection-card animate__animated animate__fadeInUp" style="border-color: #e9ecef;">
+                    <!-- Total RT Card -->
+                    <div class="col-md-4">
+                        <div class="card info-card">
                             <div class="card-body">
-                                <h5 class="card-title">Laporan Warga yang Belum Ditindak Jumantik</h5>
                                 <div class="d-flex align-items-center">
-                                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center" style="background-color: #dc3545;">
-                                        <i class="bi bi-hourglass-bottom" style="color: white; font-size: 24px;"></i> <!-- Ganti dengan ikon lain -->
+                                    <div class="icon bg-info text-white rounded-circle p-4 mt-4">
+                                        <i class="bi bi-building"></i>
                                     </div>
-                                    <div class="ps-3">
-                                        <h6 style="color: #343a40;">{{ $totalRumahBelumDiperiksa }}</h6>
+                                    <div class="ml-3">
+                                        <h5 class="card-title">Total RT</h5>
+                                        <h6>{{ $totalRT }}</h6>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div><!-- End Total Rumah yang Belum Diperiksa Card -->
-                    <div class="col-xl-3 col-md-6 mb-4">
-                        <div class="card info-card inspection-card animate__animated animate__fadeInUp" style="border-color: #f5c6cb;height: 225px;">
-                            <div class="card-body">
-                                <h5 class="card-title">Rumah Positif Jentik</h5>
-                                <div class="d-flex align-items-center">
-                                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center" style="background-color: #dc3545;">
-                                        <i class="bi bi-plus-circle" style="color: white; font-size: 24px;"></i>
-                                    </div>
-                                    <div class="ps-3">
-                                        <h6 style="color: #dc3545;">{{ $jumlahStatusJentikPositif }}</h6>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-3 col-md-6 mb-4">
-                        <div class="card info-card inspection-card animate__animated animate__fadeInUp" style="border-color: #c3e6cb;height: 225px; ">
-                            <div class="card-body">
-                                <h5 class="card-title">Rumah Negatif Jentik</h5>
-                                <div class="d-flex align-items-center">
-                                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center" style="background-color: #28a745;">
-                                        <i class="bi bi-dash-circle" style="color: white; font-size: 24px;"></i>
-                                    </div>
-                                    <div class="ps-3">
-                                        <h6 style="color: #28a745;">{{ $jumlahStatusJentikNegatif }}</h6>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Total Laporan Jumantik yang Sudah Ditindak Card -->
-                    <div class="col-xl-3 col-md-6 mb-4">
-                        <div class="card info-card inspection-card animate__animated animate__fadeInUp">
-                            <div class="card-body">
-                                <h5 class="card-title">Laporan Jumantik yang Sudah Ditindak Puskesmas</h5>
-                                <div class="d-flex align-items-center">
-                                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                                        <i class="bi bi-check-circle"></i> <!-- Ikon Tindakan -->
-                                    </div>
-                                    <div class="ps-3">
-                                        <h6 class="total-value">{{ $totalSudahDitindak }}</h6>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div><!-- End Total Laporan Jumantik yang Sudah Ditindak Card -->
+                    </div><!-- End Total RT Card -->
 
-                    <!-- Total Laporan yang Belum Ditindak Card -->
-                    <div class="col-xl-3 col-md-6 mb-4">
-                        <div class="card info-card inspection-card animate__animated animate__fadeInUp" style="border-color: #e9ecef;">
+                    <!-- Total RW Card -->
+                    <div class="col-md-4">
+                        <div class="card info-card">
                             <div class="card-body">
-                                <h5 class="card-title">Laporan Jumantik Yang Belum Ditindak Puskesmas</h5>
                                 <div class="d-flex align-items-center">
-                                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center animate__animated animate__rotate" style="background-color: #dc3545;">
-                                        <i class="bi bi-hourglass-bottom" style="color: white; font-size: 24px;"></i> <!-- Ikon Hourglass -->
+                                    <div class="icon bg-info text-white rounded-circle p-4 mt-4">
+                                        <i class="bi bi-house"></i>
                                     </div>
-                                    <div class="ps-3">
-                                        <h6 style="color: #343a40;">{{ $totalBelumDitindak }}</h6>
+                                    <div class="ml-3">
+                                        <h5 class="card-title">Total RW</h5>
+                                        <h6>{{ $totalRW }}</h6>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div><!-- End Total Laporan yang Belum Ditindak Card -->
+                    </div><!-- End Total RW Card -->
                 </div>
-                <!-- Filter Tahun -->
-                <div class="col-12 mb-4">
-                    <label for="yearFilter">Pilih Tahun:</label>
-                    <select id="yearFilter" class="form-control">
-                        @for ($i = date('Y'); $i <= date('Y') + 5; $i++) <option value="{{ $i }}">{{ $i }}</option>
-                            @endfor
-                    </select>
-                </div>
-                <!-- Chart Section -->
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">Laporan Perkembangan Kasus Jentik Nyamuk</h5>
-                            <canvas id="monthlyReportsChart" width="400" height="200"></canvas>
-                        </div>
+
+                <!-- Filter and Chart Card -->
+                <div class="card mt-5">
+                    <div class="card-body">
+                        <!-- Year Filter -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <form action="{{ route('user.index') }}" method="GET">
+                                    <div class="form-group">
+                                        <label for="year" style="margin-top: 30px;">Pilih Tahun:</label>
+                                        <select name="year" id="year" class="form-control">
+                                            @php
+                                            $currentYear = date('Y');
+                                            $endYear = $currentYear + 5;
+                                            @endphp
+                                            @for ($y = $currentYear; $y <= $endYear; $y++) <option value="{{ $y }}" {{ $y == $selectedYear ? 'selected' : '' }}>{{ $y }}</option>
+                                                @endfor
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Filter</button>
+                                </form>
+                            </div>
+                        </div><!-- End Year Filter -->
+
+                        <!-- Positive Houses Chart -->
+                        <div class="row">
+                            <div class="col-12">
+                                <h5 class="card-title text-center">Jumlah Rumah Positif Berdasarkan RW</h5>
+                                <canvas id="positiveHousesChart" width="400" height="200"></canvas>
+                            </div>
+                        </div><!-- End Positive Houses Chart -->
                     </div>
-                </div>
-                <!-- End Chart Section -->
-            </div>
+                </div><!-- End Filter and Chart Card -->
+
+            </div><!-- End Left side columns -->
+        </div>
     </section>
 </main>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Array of month names in Indonesian
-        const monthNames = [
-            'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-            'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
-        ];
-
-        // Function to update chart
-        function updateChart(year) {
-            $.ajax({
-                url: "{{ route('user.index') }}", // Update this URL to your route
-                method: 'GET',
-                data: {
-                    year: year
-                },
-                success: function(response) {
-                    const chartData = response.chartData;
-                    const labels = monthNames;
-                    const counts = labels.map((month, index) => {
-                        const dataPoint = chartData.find(item => item.month === (index + 1));
-                        return dataPoint ? dataPoint.count : 0; // Use count if data is available, otherwise 0
-                    });
-
-                    // Array of predefined colors for bars
-                    const barColors = [
-                        'rgba(255, 99, 132, 0.6)',
-                        'rgba(54, 162, 235, 0.6)',
-                        'rgba(255, 206, 86, 0.6)',
-                        'rgba(75, 192, 192, 0.6)',
-                        'rgba(153, 102, 255, 0.6)',
-                        'rgba(255, 159, 64, 0.6)',
-                        'rgba(255, 99, 132, 0.6)',
-                        'rgba(54, 162, 235, 0.6)',
-                        'rgba(255, 206, 86, 0.6)',
-                        'rgba(75, 192, 192, 0.6)',
-                        'rgba(153, 102, 255, 0.6)',
-                        'rgba(255, 159, 64, 0.6)'
-                    ];
-
-                    // Create chart
-                    const ctx = document.getElementById('monthlyReportsChart').getContext('2d');
-                    if (window.myChart) {
-                        window.myChart.destroy();
-                    }
-                    window.myChart = new Chart(ctx, {
-                        type: 'bar',
-                        data: {
-                            labels: labels,
-                            datasets: [{
-                                label: 'Jumlah Kasus',
-                                data: counts,
-                                backgroundColor: barColors,
-                                borderColor: 'rgba(54, 162, 235, 1)',
-                                borderWidth: 1
-                            }]
-                        },
-                        options: {
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-                                    grid: {
-                                        display: true,
-                                        color: 'rgba(0, 0, 0, 0.1)'
-                                    },
-                                    ticks: {
-                                        stepSize: 1 // Use whole number steps for y-axis ticks
-                                    }
-                                },
-                                x: {
-                                    grid: {
-                                        display: false
-                                    }
-                                }
-                            },
-                            plugins: {
-                                title: {
-                                    display: true,
-                                    text: 'Grafik Jumlah Laporan Warga',
-                                    font: {
-                                        size: 16
-                                    }
-                                },
-                                legend: {
-                                    display: false
-                                },
-                                animation: {
-                                    duration: 1500,
-                                    easing: 'easeInOutQuart'
-                                }
-                            }
+        var ctx = document.getElementById('positiveHousesChart').getContext('2d');
+        var chart = new Chart(ctx, {
+            type: 'bar', // You can change this to 'line', 'pie', etc.
+            data: {
+                labels: @json($positiveHousesByRW -> pluck('RW')),
+                datasets: [{
+                    label: 'Jumlah Positif',
+                    data: @json($positiveHousesByRW -> pluck('positive_count')),
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Jumlah Positif'
                         }
-                    });
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'RW'
+                        }
+                    }
                 }
-            });
-        }
-
-        // Initial load
-        const initialYear = new Date().getFullYear();
-        updateChart(initialYear);
-
-        // Update chart when year is changed
-        $('#yearFilter').on('change', function() {
-            const selectedYear = $(this).val();
-            updateChart(selectedYear);
+            }
         });
     });
 </script>

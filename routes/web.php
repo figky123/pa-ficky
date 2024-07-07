@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\User\AuthController as UserAuthController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\LaporanRWController;
+use App\Http\Controllers\LaporanLurahController;
+use App\Http\Controllers\LaporanRTController;
 use App\Http\Controllers\WargaController;
 use App\Http\Controllers\User\DashboardController as UserDashboardController;
 use App\Http\Controllers\Warga\FiturController as WargaFiturController;
@@ -45,16 +47,6 @@ Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('user.
 Route::get('/total-bangunan', [UserDashboardController::class, 'getTotalBangunan'])->name('pegawai.getBangunan');;
 Route::get('/chart-data', [UserController::class, 'chartData'])->name('chart-data');
 
-
-//CRUD LAPORAN
-//Route::get('/laporans', [LaporanController::class, 'index'])->name('laporans');
-Route::get('/laporan/create', [LaporanController::class, 'create'])->name('laporan.create');
-Route::get('/laporan/edit/{book}', [LaporanController::class, 'edit'])->name('laporan.edit');
-Route::post('/laporan/update/{id}', [LaporanController::class, 'update'])->name('laporan.update');
-Route::post('/laporan/delete/{id}', [LaporanController::class, 'destroy'])->name('laporan.destroy');
-Route::post('/laporan/store', [LaporanController::class, 'store'])->name('laporan.store');
-Route::post('/laporan/{id}/update-status', [LaporanController::class, 'updateStatus'])->name('laporan.updateStatus');
-
 //CRUD PEMERIKSAAN
 //Route::get('/pemeriksaans', [PemeriksaanController::class, 'index'])->name('pemeriksaans');
 Route::get('/pemeriksaan/create', [PemeriksaanController::class, 'create'])->name('pemeriksaan.create');
@@ -67,23 +59,16 @@ Route::post('/pemeriksaan/update-status', [PemeriksaanController::class, 'update
 //LURAH
 Route::get('/table_warga', [WargaController::class, 'index'])->name('wargas');
 Route::get('/table_petugas', [UserController::class, 'index'])->name('users');
-Route::get('/laporan_warga', [LaporanController::class, 'index'])->name('laporans');
 Route::get('/laporan_jumantik1', [PemeriksaanController::class, 'index'])->name('pemeriksaans');
-
-
-
-//WARGA
-Route::get('/warga/datajentik', [WargaFiturController::class, 'data'])->name('warga.datajentik');
-Route::post('/warga/store', [WargaFiturController::class, 'store'])->name('warga.store');
+Route::get('/laporanRT', [LaporanRTController::class, 'index'])->name('laporan.rt');
+Route::get('/laporanRW', [LaporanRWController::class, 'index'])->name('laporan.rw');
+Route::get('/laporanlurah', [LaporanLurahController::class, 'index'])->name('laporan.lurah');
+Route::get('/laporan_puskesmas', [TindakanController::class, 'index'])->name('tindakans');
 
 
 //PUSKESMAS
 Route::get('/laporan_puskesmas', [TindakanController::class, 'index'])->name('tindakans');
 Route::post('/tindakan/store', [TindakanController::class, 'store'])->name('tindakan.store');
 
-
-//SUMMARY
-Route::get('/laporan_jumantik2', [SummaryController::class, 'summary'])->name('summary');
-Route::get('/generate-pdf', [SummaryController::class, 'generatePDF'])->name('generate-pdf');
 
 Route::get('/testing', [TestingController::class, 'index'])->name('testings');

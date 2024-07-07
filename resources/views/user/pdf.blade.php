@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>Laporan Jumantik</title>
+    <title>Laporan Pemeriksaan Jentik</title>
     <style>
         body {
             font-family: 'Open Sans', sans-serif;
@@ -16,7 +17,7 @@
         }
 
         .header img {
-            max-width: 100%;
+            width: 120%;
             height: auto;
             margin-bottom: 20px;
         }
@@ -39,7 +40,7 @@
 
         th,
         td {
-            padding: 12px; /* Mengurangi padding untuk memastikan tidak melebihi batas */
+            padding: 12px;
             text-align: center;
             font-size: 12px;
             transition: background-color 0.3s, transform 0.3s;
@@ -68,35 +69,35 @@
         }
     </style>
 </head>
+
 <body>
     <div class="header">
         <img src="{{ public_path('assets/img/kopsurat.jpg') }}" alt="Kop Surat">
     </div>
-    <h1>Laporan Jumantik</h1>
+    <h1>Laporan Pemeriksaan Jentik Periode {{ date('F', mktime(0, 0, 0, $selectedMonth, 1)) }} {{ $selectedYear }}</h1>
 
     <table>
         <thead>
             <tr>
-                <th>Nama Petugas</th>
-                <th>Siklus</th>
-                <th>Jumlah Rumah Warga yang Diperiksa</th>
+                <th>RW</th>
+                <th>Jumlah Rumah Diperiksa</th>
                 <th>Jumlah Rumah Positif Jentik</th>
-                <th>ABJ (Angka Bebas Jentik)</th>
+                <th>ABJ</th>
                 <th>Kategori</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($summaryData as $item)
             <tr>
-                <td>{{ $item['nama_petugas'] }}</td>
-                <td>{{ $item['siklus'] }}</td>
-                <td>{{ $item['uniqueBuildingsCount'] }}</td>
-                <td>{{ $item['positiveLarvaeCount'] }}</td>
-                <td>{{ number_format($item['abj'], 2) }}%</td>
-                <td>{{ $item['kategori'] }}</td>
+                <td>{{ $item->RW }}</td>
+                <td>{{ $item->jumlahrumahdiperiksa }}</td>
+                <td>{{ $item->jumlahrumahpositif }}</td>
+                <td>{{ number_format($item->ABJ, 2) }}%</td>
+                <td>{{ $item->Kategori }}</td>
             </tr>
             @endforeach
         </tbody>
     </table>
 </body>
+
 </html>

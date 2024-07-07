@@ -15,13 +15,8 @@ class TestingController extends Controller
      */
     public function index(request $request)
     {
-        $selectedYear = $request->input('year', date('Y'));
-        // Mendapatkan data chart berdasarkan tahun yang dipilih
-        $chartData = Laporan::selectRaw('MONTH(tgl_laporan) as month, COUNT(*) as count')
-            ->whereYear('tgl_laporan', $selectedYear)
-            ->groupBy('month')
-            ->orderBy('month')
-            ->get();
-        return $chartData;
+        $pemeriksaans = Pemeriksaan::where('siklus', 4)
+        ->with('users') // Eager load user relationship to avoid N+1 problem
+        ->get();
     }
 }

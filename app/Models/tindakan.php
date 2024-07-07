@@ -10,7 +10,7 @@ class tindakan extends Model
     use HasFactory;
 
     protected $fillable = [
-        'id_user', 'id_pemeriksaan', 'tgl_tindakan', 'ket_tindakan', 'bukti_tindakan', 'status_tindakan'
+        'nama_petugas', 'RW', 'tgl_tindakan', 'ket_tindakan', 'bukti_tindakan'
     ];
     protected $table = 'tindakans';
     protected $primaryKey = 'id';
