@@ -36,13 +36,22 @@ class DashboardController extends Controller
             ->groupBy('users.RW')
             ->get();
 
+        $negativeHousesByRW = Pemeriksaan::selectRaw('users.RW as RW, count(*) as negative_count')
+            ->join('users', 'pemeriksaans.id_user', '=', 'users.id')
+            ->where('pemeriksaans.siklus', 4)
+            ->whereYear('pemeriksaans.tgl_pemeriksaan', $selectedYear)
+            ->where('pemeriksaans.status_jentik', 'negatif')
+            ->groupBy('users.RW')
+            ->get();
+
+
         // Fetch years with available data for filter
         $years = Pemeriksaan::selectRaw('YEAR(tgl_pemeriksaan) as year')
             ->groupBy('year')
             ->orderBy('year', 'desc')
             ->pluck('year');
 
-        return view('user.index', compact('totalWarga', 'totalRW', 'totalRT', 'positiveHousesByRW', 'selectedYear', 'years'));
+        return view('user.index', compact('totalWarga', 'totalRW', 'totalRT', 'positiveHousesByRW','negativeHousesByRW', 'selectedYear', 'years'));
     }
     // Method untuk mengambil data grafik jumlah rumah positif berdasarkan RW
 

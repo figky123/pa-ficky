@@ -16,7 +16,7 @@
         <div class="row justify-content-center mt-4">
             <div class="col-md-8">
                 <div class="card">
-                    <div class="card-header" style="background-color: #007bff; color: #fff; font-weight: bold;">Edit Warga</div>
+                    <div class="card-header" style="background-color: #007bff; color: #fff; font-weight: bold;">Edit Data Pengguna</div>
                     <div class="card-body">
                         <form method="POST" action="{{ route('user.update', $user->id) }}" class="p-2">
                             @csrf

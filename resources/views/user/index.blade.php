@@ -97,8 +97,9 @@
                                             $currentYear = date('Y');
                                             $endYear = $currentYear + 5;
                                             @endphp
-                                            @for ($y = $currentYear; $y <= $endYear; $y++) <option value="{{ $y }}" {{ $y == $selectedYear ? 'selected' : '' }}>{{ $y }}</option>
-                                                @endfor
+                                            @for ($y = $currentYear; $y <= $endYear; $y++)
+                                                <option value="{{ $y }}" {{ $y == $selectedYear ? 'selected' : '' }}>{{ $y }}</option>
+                                            @endfor
                                         </select>
                                     </div>
                                     <button type="submit" class="btn btn-primary">Filter</button>
@@ -106,13 +107,13 @@
                             </div>
                         </div><!-- End Year Filter -->
 
-                        <!-- Positive Houses Chart -->
+                        <!-- Combined Positive and Negative Houses Chart -->
                         <div class="row">
                             <div class="col-12">
-                                <h5 class="card-title text-center">Jumlah Rumah Positif Berdasarkan RW</h5>
-                                <canvas id="positiveHousesChart" width="400" height="200"></canvas>
+                                <h5 class="card-title text-center">Jumlah Rumah Positif dan Negatif Berdasarkan RW</h5>
+                                <canvas id="combinedHousesChart" width="400" height="200"></canvas>
                             </div>
-                        </div><!-- End Positive Houses Chart -->
+                        </div><!-- End Combined Positive and Negative Houses Chart -->
                     </div>
                 </div><!-- End Filter and Chart Card -->
 
@@ -123,18 +124,26 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        var ctx = document.getElementById('positiveHousesChart').getContext('2d');
-        var chart = new Chart(ctx, {
-            type: 'bar', // You can change this to 'line', 'pie', etc.
+        var ctx = document.getElementById('combinedHousesChart').getContext('2d');
+        var combinedChart = new Chart(ctx, {
+            type: 'bar',
             data: {
-                labels: @json($positiveHousesByRW -> pluck('RW')),
+                labels: @json($positiveHousesByRW->pluck('RW')),
                 datasets: [{
-                    label: 'Jumlah Positif',
-                    data: @json($positiveHousesByRW -> pluck('positive_count')),
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1
-                }]
+                        label: 'Jumlah Positif',
+                        data: @json($positiveHousesByRW->pluck('positive_count')),
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Jumlah Negatif',
+                        data: @json($negativeHousesByRW->pluck('negative_count')),
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    }
+                ]
             },
             options: {
                 scales: {
@@ -142,13 +151,22 @@
                         beginAtZero: true,
                         title: {
                             display: true,
-                            text: 'Jumlah Positif'
+                            text: 'Jumlah'
                         }
                     },
                     x: {
                         title: {
                             display: true,
                             text: 'RW'
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                return tooltipItem.dataset.label + ': ' + tooltipItem.raw;
+                            }
                         }
                     }
                 }
