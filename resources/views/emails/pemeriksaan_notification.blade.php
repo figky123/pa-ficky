@@ -57,7 +57,7 @@
     </div>
     <div class="footer">
         <p>Kelurahan Labuhbaru Timur, Jl. Kayu Dadap Putih No. 01, Kota Pekanbaru</p>
-        <p>Telepon: (021) 12345678 | Email: admlurah@gmail.com</p>
+        <p>Telepon: (0761) 7865008 | Email: admlurah@gmail.com</p>
     </div>
 </body>
 </html>

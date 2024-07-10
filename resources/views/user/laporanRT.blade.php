@@ -37,6 +37,7 @@
                                     <tr>
                                         <th>Nama Kepala Keluarga</th>
                                         <th>RT</th>
+                                        <th>RW</th>
                                         <th>Waktu Pemeriksaan</th>
                                         <th>Alamat</th>
                                         <th>Status Jentik</th>
@@ -47,6 +48,7 @@
                                     <tr>
                                         <td>{{ $pemeriksaan->user->name }}</td>
                                         <td>{{ $pemeriksaan->user->RT }}</td>
+                                        <td>{{ $pemeriksaan->user->RW }}</td>
                                         <td>{{ $pemeriksaan->formatted_tgl_pemeriksaan }}</td>
                                         <td>{{ $pemeriksaan->user->alamat }}</td>
                                         <td>{{ $pemeriksaan->status_jentik }}</td>
