@@ -282,14 +282,6 @@
 </div>
 <script>
     $(document).ready(function() {
-        $('.view-image-btn').on('click', function() {
-            var imageUrl = $(this).data('image');
-            var createdAt = $(this).data('created-at');
-            $('#modalImage').attr('src', imageUrl);
-            $('#createdAtText').text('Waktu Pemeriksaan: ' + new Date(createdAt).toLocaleString());
-        });
-
-        // Modal tambah data
         $('#formTambahData').on('submit', function(event) {
             event.preventDefault();
             var formData = new FormData(this);
@@ -303,23 +295,31 @@
                 contentType: false,
                 success: function(response) {
                     console.log('Data berhasil ditambahkan');
-                    $('#tambahDataModal').modal('hide'); // Menutup modal setelah menambahkan data
+                    $('#tambahDataModal').modal('hide');
                     Swal.fire({
                         icon: 'success',
                         title: 'Data berhasil ditambahkan',
                         showConfirmButton: false,
                         timer: 1500
                     }).then(() => {
-                        location.reload(); // Memperbarui tampilan dengan data yang baru ditambahkan
+                        location.reload();
                     });
                 },
                 error: function(xhr, status, error) {
                     console.error('Terjadi kesalahan:', error);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Terjadi kesalahan',
-                        text: 'Silakan coba lagi',
-                    });
+                    if (xhr.status === 400) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Duplikasi Data',
+                            text: xhr.responseJSON.error,
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Terjadi kesalahan',
+                            text: 'Silakan coba lagi.',
+                        });
+                    }
                 }
             });
         });

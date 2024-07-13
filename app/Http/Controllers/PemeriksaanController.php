@@ -72,6 +72,22 @@ class PemeriksaanController extends Controller
             'ket_pemeriksaan' => 'required|string|max:255',
         ]);
 
+        // Ambil data dari request
+        $id_user = $request->input('id_user');
+        $tgl_pemeriksaan = $request->input('tgl_pemeriksaan');
+
+        // Cek apakah sudah ada pemeriksaan dalam minggu yang sama
+        $startOfWeek = Carbon::parse($tgl_pemeriksaan)->startOfWeek();
+        $endOfWeek = Carbon::parse($tgl_pemeriksaan)->endOfWeek();
+
+        $existingPemeriksaan = Pemeriksaan::where('id_user', $id_user)
+            ->whereBetween('tgl_pemeriksaan', [$startOfWeek, $endOfWeek])
+            ->exists();
+
+        if ($existingPemeriksaan) {
+            return response()->json(['error' => 'Anda telah menginput data untuk minggu ini. Harap tunggu sampai minggu depan untuk menginput data baru.'], 400);
+        }
+
         // Retrieve and process boolean values
         $keys = ['kaleng_bekas', 'ember', 'ban_bekas', 'vas_bunga', 'bak_mandi', 'lainnya_dalam', 'lainnya_luar'];
         $values = array_map(fn ($key) => $request->input($key), $keys);
