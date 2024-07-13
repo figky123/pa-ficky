@@ -58,7 +58,7 @@ class PemeriksaanController extends Controller
         // Validasi input
         $validatedData = $request->validate([
             'id_user' => 'required|integer|exists:users,id',
-            'nama_pemeriksa' => 'required|string|max:255',
+
             'tgl_pemeriksaan' => 'required|date',
             'siklus' => 'required|integer',
             'kaleng_bekas' => 'required|integer|in:1,0,-1',
@@ -109,7 +109,6 @@ class PemeriksaanController extends Controller
 
         // Simpan ke database
         $pemeriksaan = new Pemeriksaan();
-        $pemeriksaan->nama_pemeriksa = $validatedData['nama_pemeriksa'];
         $pemeriksaan->id_user = $validatedData['id_user'];
         $pemeriksaan->siklus = $validatedData['siklus'];
         $pemeriksaan->bukti_pemeriksaan = $file_name;
@@ -131,7 +130,7 @@ class PemeriksaanController extends Controller
         // Send email notification if siklus is 4 and status_jentik is positif
         if ($pemeriksaan->siklus == 4 && $pemeriksaan->status_jentik == 'positif') {
             $data = [
-                'nama_pemeriksa' => $pemeriksaan->nama_pemeriksa,
+                'id_user' => $pemeriksaan->user->name,
                 'tgl_pemeriksaan' => $pemeriksaan->tgl_pemeriksaan,
                 'siklus' => $pemeriksaan->siklus,
                 'status_jentik' => $pemeriksaan->status_jentik,
@@ -145,6 +144,7 @@ class PemeriksaanController extends Controller
         return redirect()->route('pemeriksaans')
             ->with('success', 'Data pemeriksaan berhasil disimpan.');
     }
+
     public function updateStatus(Request $request)
     {
         try {

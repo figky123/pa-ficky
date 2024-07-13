@@ -39,7 +39,7 @@
         <p>Berikut ini adalah hasil pemeriksaan terbaru yang perlu mendapatkan perhatian:</p>
         <div class="details">
             <ul>
-                <li><strong>Nama Pemeriksa:</strong> {{ $data['nama_pemeriksa'] }}</li>
+                <li><strong>Nama Pemeriksa:</strong> {{ $data['id_user'] }}</li>
                 <li><strong>Tanggal Pemeriksaan:</strong> {{ \Carbon\Carbon::parse($data['tgl_pemeriksaan'])->format('d-m-Y') }}</li>
                 <li><strong>Siklus:</strong> {{ $data['siklus'] }}</li>
                 <li><strong>Status Jentik:</strong> {{ $data['status_jentik'] }}</li>

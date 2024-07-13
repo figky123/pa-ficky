@@ -79,7 +79,7 @@
                                 <thead>
                                     <tr>
                                         <th>Nama Kepala Keluarga</th>
-                                        <th>Nama Pemeriksa</th>
+
                                         <th>Siklus</th>
                                         <th>Alamat</th>
                                         <th>RT</th>
@@ -101,19 +101,20 @@
                                     @foreach($pemeriksaans as $pemeriksaan)
                                     <tr>
                                         <td>{{ $pemeriksaan->user->name }}</td>
-                                        <td>{{ $pemeriksaan->nama_pemeriksa }}</td>
+
                                         <td>{{ $pemeriksaan->siklus }}</td>
                                         <td>{{ $pemeriksaan->user->alamat }}</td>
                                         <td>{{ $pemeriksaan->user->RT }}</td>
                                         <td>{{ $pemeriksaan->user->RW }}</td>
                                         <td>{{ \Carbon\Carbon::parse($pemeriksaan->tgl_pemeriksaan)->translatedFormat('j F Y') }}</td>
-                                        <td>{{ $pemeriksaan->bak_mandi == 1 ? '✔️' : ($pemeriksaan->bak_mandi == 0 ? '❌' : ($pemeriksaan->bak_mandi == -1 ? 'Tidak ada' : '')) }}</td>
-                                        <td>{{ $pemeriksaan->ember == 1 ? '✔️' : ($pemeriksaan->ember == 0 ? '❌' : ($pemeriksaan->ember == -1 ? 'Tidak ada' : '')) }}</td>
-                                        <td>{{ $pemeriksaan->vas_bunga == 1 ? '✔️' : ($pemeriksaan->vas_bunga == 0 ? '❌' : ($pemeriksaan->vas_bunga == -1 ? 'Tidak ada' : '')) }}</td>
-                                        <td>{{ $pemeriksaan->lainnya_dalam == 1 ? '✔️' : ($pemeriksaan->lainnya_dalam == 0 ? '❌' : ($pemeriksaan->lainnya_dalam == -1 ? 'Tidak ada' : '')) }}</td>
-                                        <td>{{ $pemeriksaan->ban_bekas == 1 ? '✔️' : ($pemeriksaan->ban_bekas == 0 ? '❌' : ($pemeriksaan->ban_bekas == -1 ? 'Tidak ada' : '')) }}</td>
-                                        <td>{{ $pemeriksaan->kaleng_bekas == 1 ? '✔️' : ($pemeriksaan->kaleng_bekas == 0 ? '❌' : ($pemeriksaan->kaleng_bekas == -1 ? 'Tidak ada' : '')) }}</td>
-                                        <td>{{ $pemeriksaan->lainnya_luar == 1 ? '✔️' : ($pemeriksaan->lainnya_luar == 0 ? '❌' : ($pemeriksaan->lainnya_luar == -1 ? 'Tidak ada' : '')) }}</td>
+                                        <td>{!! $pemeriksaan->bak_mandi == 1 ? '<i class="fas fa-plus-circle" style="color: red;"></i>' : ($pemeriksaan->bak_mandi == 0 ? '<i class="fas fa-minus-circle" style="color: green;"></i>' : 'Tidak ada') !!}</td>
+                                        <td>{!! $pemeriksaan->ember == 1 ? '<i class="fas fa-plus-circle" style="color: red;"></i>' : ($pemeriksaan->ember == 0 ? '<i class="fas fa-minus-circle" style="color: green;"></i>' : 'Tidak ada') !!}</td>
+                                        <td>{!! $pemeriksaan->vas_bunga == 1 ? '<i class="fas fa-plus-circle" style="color: red;"></i>' : ($pemeriksaan->vas_bunga == 0 ? '<i class="fas fa-minus-circle" style="color: green;"></i>' : 'Tidak ada') !!}</td>
+                                        <td>{!! $pemeriksaan->lainnya_dalam == 1 ? '<i class="fas fa-plus-circle" style="color: red;"></i>' : ($pemeriksaan->lainnya_dalam == 0 ? '<i class="fas fa-minus-circle" style="color: green;"></i>' : 'Tidak ada') !!}</td>
+                                        <td>{!! $pemeriksaan->ban_bekas == 1 ? '<i class="fas fa-plus-circle" style="color: red;"></i>' : ($pemeriksaan->ban_bekas == 0 ? '<i class="fas fa-minus-circle" style="color: green;"></i>' : 'Tidak ada') !!}</td>
+                                        <td>{!! $pemeriksaan->kaleng_bekas == 1 ? '<i class="fas fa-plus-circle" style="color: red;"></i>' : ($pemeriksaan->kaleng_bekas == 0 ? '<i class="fas fa-minus-circle" style="color: green;"></i>' : 'Tidak ada') !!}</td>
+                                        <td>{!! $pemeriksaan->lainnya_luar == 1 ? '<i class="fas fa-plus-circle" style="color: red;"></i>' : ($pemeriksaan->lainnya_luar == 0 ? '<i class="fas fa-minus-circle" style="color: green;"></i>' : 'Tidak ada') !!}</td>
+
                                         <td>{{ $pemeriksaan->status_jentik }}</td>
                                         <td>
                                             @if($pemeriksaan->bukti_pemeriksaan)
@@ -165,6 +166,16 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Keterangan Simbol:</h5>
+                    <ul>
+                        <li>✔️: Ditemukan jentik di lokasi ini.</li>
+                        <li>❌: Tidak ditemukan jentik di lokasi ini.</li>
+                        <li>Tidak ada: Barang atau objek tersebut tidak ada di rumah.</li>
+                    </ul>
+                </div>
+            </div>
             <!-- Form Tambah Data -->
             <div class="modal-body">
                 <form id="formTambahData" method="post" action="{{ route('pemeriksaan.store') }}" enctype="multipart/form-data">
@@ -176,10 +187,7 @@
                         <label for="name">Nama Kepala Keluarga</label>
                         <input type="text" id="name" name="name" class="form-control" value="{{ Auth::user()->name }}" readonly>
                     </div>
-                    <div class="form-group">
-                        <label for="nama_pemeriksa">Nama Pemeriksa</label>
-                        <input type="text" class="form-control" id="nama_pemeriksa" name="nama_pemeriksa" placeholder="Masukkan Nama Pemeriksa" required>
-                    </div>
+
                     <div class="form-group">
                         <label for="siklus">Siklus</label>
                         <input type="text" class="form-control" id="siklus" name="siklus" placeholder="Masukkan Siklus" required>
@@ -282,6 +290,12 @@
 </div>
 <script>
     $(document).ready(function() {
+        $('.view-image-btn').on('click', function() {
+            var imageUrl = $(this).data('image');
+            var createdAt = $(this).data('created-at');
+            $('#modalImage').attr('src', imageUrl);
+            $('#createdAtText').text('Waktu Pemeriksaan: ' + new Date(createdAt).toLocaleString());
+        });
         $('#formTambahData').on('submit', function(event) {
             event.preventDefault();
             var formData = new FormData(this);
