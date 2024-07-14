@@ -4,6 +4,7 @@ use App\Http\Controllers\User\AuthController as UserAuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LaporanRWController;
 use App\Http\Controllers\LaporanLurahController;
+use App\Http\Controllers\User\AdminController as PegawaiAuthController;
 use App\Http\Controllers\LaporanRTController;
 use App\Http\Controllers\WargaController;
 use App\Http\Controllers\User\DashboardController as UserDashboardController;
@@ -46,6 +47,7 @@ Route::get('/token', function () {
 Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('user.index');
 Route::get('/total-bangunan', [UserDashboardController::class, 'getTotalBangunan'])->name('pegawai.getBangunan');;
 Route::get('/chart-data', [UserController::class, 'chartData'])->name('chart-data');
+Route::post('/user/store', [UserController::class, 'store'])->name('user.store');
 
 //CRUD PEMERIKSAAN
 //Route::get('/pemeriksaans', [PemeriksaanController::class, 'index'])->name('pemeriksaans');
@@ -70,6 +72,9 @@ Route::post('/cek-duplikasi', [PemeriksaanController::class, 'cekDuplikasi'])->n
 //PUSKESMAS
 Route::get('/laporan_puskesmas', [TindakanController::class, 'index'])->name('tindakans');
 Route::post('/tindakan/store', [TindakanController::class, 'store'])->name('tindakan.store');
+
+Route::get('/create-user', [PegawaiAuthController::class, 'createUser'])->name('admin.createUser');
+Route::post('/store-user',[PegawaiAuthController::class, 'storeUser'])->name('admin.storeUser');
 
 
 Route::get('/testing', [TestingController::class, 'index'])->name('testings');

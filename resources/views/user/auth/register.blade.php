@@ -65,6 +65,7 @@
         }
     </style>
 </head>
+
 <body class="bg-gradient-primary">
     @if(\Session::has('success'))
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
@@ -116,17 +117,8 @@
                             <div class="form-group">
                                 <input type="password" class="form-control form-control-user" id="password" name="password" placeholder="Password" required>
                             </div>
-                            <div class="form-group">
-                                <div class="custom-select">
-                                    <select name="role">
-                                        <option value="" disabled selected>Pilih Role</option>
-                                        <option value="Warga">Warga</option>
-                                        <option value="RT">RT</option>
-                                        <option value="RW">RW</option>
-                                        <option value="Puskesmas">Puskesmas</option>
-                                    </select>
-                                </div>
-                            </div>
+                            <!-- Input hidden untuk menyimpan nilai role -->
+                            <input type="hidden" name="role" value="Warga">
                             <button type="submit" class="btn btn-primary btn-user btn-block">
                                 Register
                             </button>
