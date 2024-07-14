@@ -46,6 +46,7 @@
                     <th>RT</th>
                     <th>RW</th>
                     @if(Auth::check() && Auth::user()->hasRole('Admin'))
+                    <th>Status</th>
                     <th>Aksi</th>
                     @endif
                   </tr>
@@ -60,6 +61,17 @@
                     <td>{{ $user->alamat }}</td>
                     <td>{{ $user->RT }}</td>
                     <td>{{ $user->RW }}</td>
+                    <td>
+                      @if($user->status_akun == 'not verified')
+                      <a href="{{ route('user.verify', $user->id) }}" class="btn btn-danger">
+                        <i class="bi bi-x-circle"></i> Verify
+                      </button>
+                      @else
+                      <span class="badge badge-success">
+                        <i class="bi bi-check-circle"></i> Verified
+                      </span>
+                      @endif
+                    </td>
                     @if(Auth::check() && Auth::user()->hasRole('Admin'))
                     <td>
                       <a href="{{ route('user.edit', $user->id) }}" class="btn btn-primary">
@@ -83,10 +95,55 @@
 @section('scripts')
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // Initialize the datatable
-    const dataTable = new simpleDatatables.DataTable("#dataTable", {
-      searchable: true,
-      fixedHeight: true,
+    // Select all elements with class 'verify-button'
+    const verifyButtons = document.querySelectorAll('.verify-button');
+
+    // Loop through each verify button and attach click event listener
+    verifyButtons.forEach(button => {
+      button.addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent default button behavior
+
+        const userId = this.getAttribute('data-id'); // Get user ID from data-id attribute
+
+        // Confirm verification action using SweetAlert
+        Swal.fire({
+          title: 'Verifikasi Akun',
+          text: 'Apakah Anda yakin ingin memverifikasi akun ini?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Ya, verifikasi!'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // Perform AJAX request to verify user account
+            $.ajax({
+              url: '{{ route("user.verify") }}',
+              method: 'POST',
+              data: {
+                _token: '{{ csrf_token() }}',
+                id: userId
+              },
+              success: function(response) {
+                if (response.status) {
+                  // Show success message using SweetAlert
+                  Swal.fire('Berhasil!', response.message, 'success').then(() => {
+                    location.reload(); // Reload page after successful verification
+                  });
+                } else {
+                  // Show error message using SweetAlert
+                  Swal.fire('Gagal!', response.message, 'error');
+                }
+              },
+              error: function(xhr, status, error) {
+                // Handle AJAX errors if any
+                console.error('AJAX Error:', error);
+                Swal.fire('Error!', 'Terjadi kesalahan saat memverifikasi akun.', 'error');
+              }
+            });
+          }
+        });
+      });
     });
   });
 </script>

@@ -4,14 +4,11 @@ use App\Http\Controllers\User\AuthController as UserAuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LaporanRWController;
 use App\Http\Controllers\LaporanLurahController;
-use App\Http\Controllers\User\AdminController as PegawaiAuthController;
 use App\Http\Controllers\LaporanRTController;
 use App\Http\Controllers\WargaController;
 use App\Http\Controllers\User\DashboardController as UserDashboardController;
-use App\Http\Controllers\Warga\FiturController as WargaFiturController;
 use App\Http\Controllers\PemeriksaanController;
 use App\Http\Controllers\TindakanController;
-use App\Http\Controllers\SummaryController;
 use App\Http\Controllers\TestingController;
 use Illuminate\Support\Facades\Route;
 
@@ -73,8 +70,7 @@ Route::post('/cek-duplikasi', [PemeriksaanController::class, 'cekDuplikasi'])->n
 Route::get('/laporan_puskesmas', [TindakanController::class, 'index'])->name('tindakans');
 Route::post('/tindakan/store', [TindakanController::class, 'store'])->name('tindakan.store');
 
-Route::get('/create-user', [PegawaiAuthController::class, 'createUser'])->name('admin.createUser');
-Route::post('/store-user',[PegawaiAuthController::class, 'storeUser'])->name('admin.storeUser');
-
 
 Route::get('/testing', [TestingController::class, 'index'])->name('testings');
+
+Route::post('/user/verify', [UserAuthController::class, 'verifyUser'])->name('user.verify');

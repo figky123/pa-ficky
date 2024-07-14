@@ -43,16 +43,23 @@ class AuthController extends Controller
 
     public function loginUser(Request $request)
     {
-
         $credentials = $request->only('email', 'password');
 
-        if (Auth::guard('web')->attempt($credentials)) {
+        $user = User::where('email', $request->email)->first();
+
+        if ($user && Hash::check($request->password, $user->password)) {
+            if ($user->status_akun !== 'verified') {
+                return back()->with('error', 'Akun belum diverifikasi, silahkan hubungi admin untuk lebih lanjut');
+            }
+
+            Auth::login($user);
             $request->session()->flash('success', 'Login berhasil');
             return redirect()->intended('/dashboard');
         }
 
         return back()->with('error', 'Email atau password salah');
     }
+
 
 
     public function registerUser(Request $request)
@@ -149,5 +156,17 @@ class AuthController extends Controller
         } else {
             return 'gagal';
         }
+    }
+
+    public function verifyUser(Request $request)
+    {
+        $user = User::findOrFail($request->id);
+        $user->status_akun = 'verified';
+        $user->save();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Akun berhasil diverifikasi'
+        ]);
     }
 }
