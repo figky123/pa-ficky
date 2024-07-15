@@ -12,6 +12,17 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 @section('content')
+@if(session('success'))
+<script>
+    Swal.fire({
+        icon: 'success',
+        title: 'Status Pemeriksaan Telah Diperbarui',
+        text: '{{ session('success ') }}',
+        showConfirmButton: false,
+        timer: 1500
+    });
+</script>
+@endif
 <main id="main" class="main">
     <div class="pagetitle">
         <h1>Laporan Jumantik</h1>
@@ -93,6 +104,7 @@
                                         <th>Kaleng Bekas</th>
                                         <th>dll(luar rumah)</th>
                                         <th>Status Jentik</th>
+                                        <th>Status Pemeriksaan</th>
                                         <th>Bukti Pemeriksaan</th>
                                         <th>Keterangan Pemeriksaan</th>
                                     </tr>
@@ -101,7 +113,6 @@
                                     @foreach($pemeriksaans as $pemeriksaan)
                                     <tr>
                                         <td>{{ $pemeriksaan->user->name }}</td>
-
                                         <td>{{ $pemeriksaan->siklus }}</td>
                                         <td>{{ $pemeriksaan->user->alamat }}</td>
                                         <td>{{ $pemeriksaan->user->RT }}</td>
@@ -114,8 +125,37 @@
                                         <td>{!! $pemeriksaan->ban_bekas == 1 ? '<i class="fas fa-plus-circle" style="color: red;"></i>' : ($pemeriksaan->ban_bekas == 0 ? '<i class="fas fa-minus-circle" style="color: green;"></i>' : 'Tidak ada') !!}</td>
                                         <td>{!! $pemeriksaan->kaleng_bekas == 1 ? '<i class="fas fa-plus-circle" style="color: red;"></i>' : ($pemeriksaan->kaleng_bekas == 0 ? '<i class="fas fa-minus-circle" style="color: green;"></i>' : 'Tidak ada') !!}</td>
                                         <td>{!! $pemeriksaan->lainnya_luar == 1 ? '<i class="fas fa-plus-circle" style="color: red;"></i>' : ($pemeriksaan->lainnya_luar == 0 ? '<i class="fas fa-minus-circle" style="color: green;"></i>' : 'Tidak ada') !!}</td>
-
                                         <td>{{ $pemeriksaan->status_jentik }}</td>
+                                        @if(auth()->user()->role === 'RT')
+                                        <td>
+                                            @if($pemeriksaan->status_pemeriksaan == 'proses')
+                                            <div class="btn-group" role="group">
+                                                <a href="{{ route('update_status', ['id' => $pemeriksaan->id, 'status' => 'diterima']) }}" class="btn btn-success btn-sm" onclick="return confirm('Apakah Anda yakin laporan ini akan diterima?')">Terima</a>
+                                                <a href="{{ route('update_status', ['id' => $pemeriksaan->id, 'status' => 'ditolak']) }}" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin laporan ini akan ditolak?')">Tolak</a>
+                                            </div>
+                                            @else
+                                            @if ($pemeriksaan->status_pemeriksaan == 'diterima')
+                                            <span class="badge badge-success">Diterima</span>
+                                            @elseif ($pemeriksaan->status_pemeriksaan == 'ditolak')
+                                            <span class="badge badge-danger">Ditolak</span>
+                                            @else
+                                            <span class="badge badge-secondary">{{ $pemeriksaan->status_pemeriksaan }}</span>
+                                            @endif
+                                            @endif
+                                        </td>
+                                        @elseif(auth()->user()->role === 'Warga')
+                                        <td>
+                                            @if ($pemeriksaan->status_pemeriksaan == 'proses')
+                                            <span class="badge badge-warning">Proses</span>
+                                            @elseif ($pemeriksaan->status_pemeriksaan == 'diterima')
+                                            <span class="badge badge-success">Diterima</span>
+                                            @elseif ($pemeriksaan->status_pemeriksaan == 'ditolak')
+                                            <span class="badge badge-danger">Ditolak</span>
+                                            @else
+                                            {{ $pemeriksaan->status_pemeriksaan }}
+                                            @endif
+                                        </td>
+                                        @endif
                                         <td>
                                             @if($pemeriksaan->bukti_pemeriksaan)
                                             <button type="button" class="btn btn-primary view-image-btn" data-toggle="modal" data-target="#imageModal" data-image="{{ asset('storage/bukti_pemeriksaan/' . $pemeriksaan->bukti_pemeriksaan) }}" data-created-at="{{ $pemeriksaan->created_at->format('Y-m-d H:i:s') }}">
@@ -337,6 +377,101 @@
                 }
             });
         });
+        $('.btn-group .btn').on('click', function(event) {
+            event.preventDefault();
+            var href = $(this).attr('href');
+            var action = $(this).text().trim();
+            var confirmationMessage = 'Apakah Anda yakin laporan ini akan ' + action.toLowerCase() + '?';
+
+            Swal.fire({
+                title: 'Konfirmasi',
+                text: confirmationMessage,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, ' + action + '!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = href;
+                }
+            });
+        });
     });
+
+    function confirmAccept(id) {
+        Swal.fire({
+            title: 'Konfirmasi',
+            text: 'Apakah Anda yakin laporan ini akan diterima?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, terima!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "{{ route('update_status', ['id' => ':id', 'status' => 'diterima']) }}".replace(':id', id),
+                    method: 'GET',
+                    success: function(response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Laporan berhasil diterima',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(() => {
+                            location.reload();
+                        });
+                    },
+                    error: function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Terjadi kesalahan',
+                            text: 'Silakan coba lagi.',
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+    function confirmReject(id) {
+        Swal.fire({
+            title: 'Konfirmasi',
+            text: 'Apakah Anda yakin laporan ini akan ditolak?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, tolak!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "{{ route('update_status', ['id' => ':id', 'status' => 'ditolak']) }}".replace(':id', id),
+                    method: 'GET',
+                    success: function(response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Laporan berhasil ditolak',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(() => {
+                            location.reload();
+                        });
+                    },
+                    error: function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Terjadi kesalahan',
+                            text: 'Silakan coba lagi.',
+                        });
+                    }
+                });
+            }
+        });
+    }
 </script>
 @endsection

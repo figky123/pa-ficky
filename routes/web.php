@@ -53,7 +53,7 @@ Route::get('/pemeriksaan/edit/{book}', [PemeriksaanController::class, 'edit'])->
 Route::post('/pemeriksaan/update/{id}', [PemeriksaanController::class, 'update'])->name('pemeriksaan.update');
 Route::post('/pemeriksaan/delete/{id}', [PemeriksaanController::class, 'destroy'])->name('pemeriksaan.destroy');
 Route::post('/pemeriksaan/store', [PemeriksaanController::class, 'store'])->name('pemeriksaan.store');
-Route::post('/pemeriksaan/update-status', [PemeriksaanController::class, 'updateStatus'])->name('pemeriksaan.updateStatus');
+Route::get('/update-status/{id}/{status}', [PemeriksaanController::class, 'updateStatus'])->name('update_status');
 
 //LURAH
 Route::get('/table_warga', [WargaController::class, 'index'])->name('wargas');

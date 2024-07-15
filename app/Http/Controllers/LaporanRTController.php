@@ -11,7 +11,7 @@ use Carbon\Carbon;
 class LaporanRTController extends Controller
 {
     public function index()
-    {
+    {   
         $loggedInUser = Auth::user();
     $pemeriksaansQuery = Pemeriksaan::where('siklus', 4)
         ->with('user') // Eager load user relationship to avoid N+1 problem

@@ -160,13 +160,12 @@ class AuthController extends Controller
 
     public function verifyUser(Request $request)
     {
-        $user = User::findOrFail($request->id);
-        $user->status_akun = 'verified';
-        $user->save();
-
-        return response()->json([
-            'status' => true,
-            'message' => 'Akun berhasil diverifikasi'
-        ]);
+        $user = User::find($request->id);
+        if ($user) {
+            $user->status_akun = 'verified';
+            $user->save();
+            return response()->json(['status' => true, 'message' => 'User verified successfully.']);
+        }
+        return response()->json(['status' => false, 'message' => 'User not found.']);
     }
 }

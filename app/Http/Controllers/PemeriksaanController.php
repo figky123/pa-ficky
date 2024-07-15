@@ -99,13 +99,10 @@ class PemeriksaanController extends Controller
         $status_jentik = $sum > 0 ? 'positif' : 'negatif';
 
         // Handle file upload with try-catch
-        try {
-            $bukti_pemeriksaan = $request->file('bukti_pemeriksaan');
-            $file_name = 'bukti_pemeriksaan_' . date('YmdHi') . '.' . $bukti_pemeriksaan->getClientOriginalExtension();
-            $bukti_pemeriksaan->move(public_path('storage/bukti_pemeriksaan'), $file_name);
-        } catch (\Exception $e) {
-            return redirect()->back()->withErrors(['bukti_pemeriksaan' => 'File upload failed: ' . $e->getMessage()]);
-        }
+        $bukti_pemeriksaan = $request->file('bukti_pemeriksaan');
+        $file_ext = pathinfo($bukti_pemeriksaan->getClientOriginalName(), PATHINFO_EXTENSION);
+        $file_name = 'bukti_tindakan_' . date('YmdHi') . '.' . $file_ext;
+        $bukti_pemeriksaan->move(public_path('storage/bukti_pemeriksaan'), $file_name);
 
         // Simpan ke database
         $pemeriksaan = new Pemeriksaan();
@@ -145,17 +142,13 @@ class PemeriksaanController extends Controller
             ->with('success', 'Data pemeriksaan berhasil disimpan.');
     }
 
-    public function updateStatus(Request $request)
+    public function updateStatus($id, $status)
     {
-        try {
-            $pemeriksaan = Pemeriksaan::findOrFail($request->id);
-            $pemeriksaan->tindakan = $request->status; // Updated to use $request->status instead of $request->tindakan
-            $pemeriksaan->save();
+        $pemeriksaan = Pemeriksaan::findOrFail($id);
+        $pemeriksaan->status_pemeriksaan = $status;
+        $pemeriksaan->save();
 
-            return response()->json(['success' => true]);
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
-        }
+        return redirect()->back()->with('success', 'Status pemeriksaan berhasil diperbarui');
     }
 
 

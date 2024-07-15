@@ -65,12 +65,12 @@
                       @if($user->status_akun == 'not verified')
                       <a href="{{ route('user.verify', $user->id) }}" class="btn btn-danger">
                         <i class="bi bi-x-circle"></i> Verify
-                      </button>
-                      @else
-                      <span class="badge badge-success">
-                        <i class="bi bi-check-circle"></i> Verified
-                      </span>
-                      @endif
+                        </button>
+                        @else
+                        <span class="badge badge-success">
+                          <i class="bi bi-check-circle"></i> Verified
+                        </span>
+                        @endif
                     </td>
                     @if(Auth::check() && Auth::user()->hasRole('Admin'))
                     <td>

@@ -23,16 +23,18 @@ class LaporanRWController extends Controller
         foreach ($users as $user) {
             $RT = $user->RT;
 
-            // Calculate the number of houses inspected with siklus 4 for this RT and within the selected month and year
+            // Calculate the number of houses inspected with siklus 4 and status_pemeriksaan "diterima" for this RT and within the selected month and year
             $jumlahrumahdiperiksa = Pemeriksaan::where('id_user', $user->id)
                 ->where('siklus', 4)
+                ->where('status_pemeriksaan', 'diterima')
                 ->whereMonth('tgl_pemeriksaan', $selectedMonth)
                 ->whereYear('tgl_pemeriksaan', $selectedYear)
                 ->count();
 
-            // Calculate the number of houses positive for jentik with siklus 4 and status_jentik "positif" for this RT and within the selected month and year
+            // Calculate the number of houses positive for jentik with siklus 4, status_pemeriksaan "diterima", and status_jentik "positif" for this RT and within the selected month and year
             $jumlahrumahpositif = Pemeriksaan::where('id_user', $user->id)
                 ->where('siklus', 4)
+                ->where('status_pemeriksaan', 'diterima')
                 ->where('status_jentik', 'positif')
                 ->whereMonth('tgl_pemeriksaan', $selectedMonth)
                 ->whereYear('tgl_pemeriksaan', $selectedYear)
