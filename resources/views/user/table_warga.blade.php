@@ -63,14 +63,14 @@
                     <td>{{ $user->RW }}</td>
                     <td>
                       @if($user->status_akun == 'not verified')
-                      <a href="{{ route('user.verify', $user->id) }}" class="btn btn-danger">
+                      <a href="{{ route('user.verify', $user->id) }}" data-id="{{$user->id}}" class="btn verify-button btn-danger">
                         <i class="bi bi-x-circle"></i> Verify
-                        </button>
-                        @else
-                        <span class="badge badge-success">
-                          <i class="bi bi-check-circle"></i> Verified
-                        </span>
-                        @endif
+                      </a>
+                      @else
+                      <span class="badge badge-success">
+                        <i class="bi bi-check-circle"></i> Verified
+                      </span>
+                      @endif
                     </td>
                     @if(Auth::check() && Auth::user()->hasRole('Admin'))
                     <td>
@@ -91,8 +91,6 @@
     </div>
   </section>
 </main><!-- End #main -->
-
-@section('scripts')
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     // Select all elements with class 'verify-button'
@@ -102,9 +100,8 @@
     verifyButtons.forEach(button => {
       button.addEventListener('click', function(event) {
         event.preventDefault(); // Prevent default button behavior
-
         const userId = this.getAttribute('data-id'); // Get user ID from data-id attribute
-
+        console.log(this.get)
         // Confirm verification action using SweetAlert
         Swal.fire({
           title: 'Verifikasi Akun',
@@ -115,6 +112,7 @@
           cancelButtonColor: '#d33',
           confirmButtonText: 'Ya, verifikasi!'
         }).then((result) => {
+          console.log(userId)
           if (result.isConfirmed) {
             // Perform AJAX request to verify user account
             $.ajax({
@@ -147,5 +145,4 @@
     });
   });
 </script>
-@endsection
 @endsection
