@@ -48,7 +48,6 @@ class UserController extends Controller
             'RT' => 'required|string|max:10',
             'RW' => 'required|string|max:10',
             'role' => 'required|string',
-            'status_akun' => 'required|string',
         ]);
 
         if ($validator->fails()) {
@@ -65,7 +64,6 @@ class UserController extends Controller
             'RT' => $request->RT,
             'RW' => $request->RW,
             'role' => $request->role,
-            'status_akun' => 'verified',
         ]);
 
         return redirect()->route('users')->with('success', 'Data User Berhasil Ditambahkan!');

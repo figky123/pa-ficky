@@ -50,6 +50,7 @@
                     <th>No Hp</th>
                     <th>Role</th>
                     @if(Auth::check() && Auth::user()->hasRole('Admin'))
+                    <th>Status Akun</th>
                     <th>Aksi</th>
                     @endif
                   </tr>
@@ -62,6 +63,17 @@
                     <td>{{ $user->no_hp_user }}</td>
                     <td>{{ $user->role }}</td>
                     @if(Auth::check() && Auth::user()->hasRole('Admin'))
+                    <td>
+                      @if($user->status_akun == 'not_verified')
+                      <a href="{{ route('user.verify', $user->id) }}" data-id="{{$user->id}}" class="btn verify-button btn-danger">
+                        <i class="bi bi-x-circle"></i> Verify
+                      </a>
+                      @else
+                      <span class="badge badge-success">
+                        <i class="bi bi-check-circle"></i> Verified
+                      </span>
+                      @endif
+                    </td>
                     <td>
                       <a href="{{ route('user.edit', $user->id) }}" class="btn btn-primary">
                         <i class="bi bi-pencil-square"></i> <!-- Icon from Bootstrap Icons -->
@@ -138,9 +150,6 @@
               <option value="RT">RT</option>
               <option value="RW">RW</option>
             </select>
-            <div class="form-group">
-              <input type="text" class="form-control" id="status_akun" name="status_akun" value="verified" required>
-            </div>
           </div>
           <button type="submit" class="btn btn-primary">Tambah</button>
         </form>
@@ -150,22 +159,58 @@
 </div>
 
 <!-- Include Script for DataTable and Modal -->
-@section('scripts')
 <script>
-  $(document).ready(function() {
-    $('#dataTable').DataTable();
-
-    // Check if session has success message and display it using SweetAlert2
-    @if(session('success'))
-    Swal.fire({
-      icon: 'success',
-      title: 'Berhasil',
-      text: '{{ session('
-      success ') }}',
-      timer: 3000,
-      showConfirmButton: false
+ 
+ document.addEventListener('DOMContentLoaded', function() {
+    // Select all elements with class 'verify-button'
+    const verifyButtons = document.querySelectorAll('.verify-button');
+    // Loop through each verify button and attach click event listener
+    verifyButtons.forEach(button => {
+      button.addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent default button behavior
+        const userId = this.getAttribute('data-id'); // Get user ID from data-id attribute
+        console.log(this.get)
+        // Confirm verification action using SweetAlert
+        Swal.fire({
+          title: 'Verifikasi Akun',
+          text: 'Apakah Anda yakin ingin memverifikasi akun ini?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Ya, verifikasi!'
+        }).then((result) => {
+          console.log(userId)
+          if (result.isConfirmed) {
+            // Perform AJAX request to verify user account
+            $.ajax({
+              url: '{{ route("user.verify") }}',
+              method: 'POST',
+              data: {
+                _token: '{{ csrf_token() }}',
+                id: userId
+              },
+              success: function(response) {
+                if (response.status) {
+                  // Show success message using SweetAlert
+                  Swal.fire('Berhasil!', response.message, 'success').then(() => {
+                    location.reload(); // Reload page after successful verification
+                  });
+                } else {
+                  // Show error message using SweetAlert
+                  Swal.fire('Gagal!', response.message, 'error');
+                }
+              },
+              error: function(xhr, status, error) {
+                // Handle AJAX errors if any
+                console.error('AJAX Error:', error);
+                Swal.fire('Error!', 'Terjadi kesalahan saat memverifikasi akun.', 'error');
+              }
+            });
+          }
+        });
+      });
     });
-    @endif
   });
 </script>
 @endsection
