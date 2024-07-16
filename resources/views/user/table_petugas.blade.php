@@ -25,21 +25,21 @@
       </ol>
     </nav>
   </div><!-- End Page Title -->
-  
+
   <section class="section">
     <div class="row">
       <div class="col-lg-12">
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">Data Petugas</h5>
-            
+
             <!-- Button to Open the Modal -->
             @if(Auth::check() && Auth::user()->hasRole('Admin'))
             <button type="button" class="btn btn-success mb-3" data-toggle="modal" data-target="#addUserModal">
               Tambah Data
             </button>
             @endif
-            
+
             <!-- Table with stripped rows -->
             <div class="table-responsive">
               <table class="table datatable" id="dataTable">
@@ -138,6 +138,9 @@
               <option value="RT">RT</option>
               <option value="RW">RW</option>
             </select>
+            <div class="form-group">
+              <input type="text" class="form-control" id="status_akun" name="status_akun" value="verified" required>
+            </div>
           </div>
           <button type="submit" class="btn btn-primary">Tambah</button>
         </form>
@@ -154,13 +157,14 @@
 
     // Check if session has success message and display it using SweetAlert2
     @if(session('success'))
-      Swal.fire({
-        icon: 'success',
-        title: 'Berhasil',
-        text: '{{ session('success') }}',
-        timer: 3000,
-        showConfirmButton: false
-      });
+    Swal.fire({
+      icon: 'success',
+      title: 'Berhasil',
+      text: '{{ session('
+      success ') }}',
+      timer: 3000,
+      showConfirmButton: false
+    });
     @endif
   });
 </script>

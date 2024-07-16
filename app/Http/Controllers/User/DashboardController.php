@@ -16,8 +16,9 @@ class DashboardController extends Controller
     public function index(Request $request)
     {
         $summaryData = [];
-
-        $totalWarga = User::where('role', 'Warga')->count();
+        $totalWarga = User::where('role', 'Warga')
+            ->where('status_akun', 'verified')
+            ->count();
 
         // Menghitung jumlah RW (distinct RW yang ada)
         $totalRW = User::distinct()->whereNotNull('RW')->count('RW');
@@ -31,6 +32,7 @@ class DashboardController extends Controller
         $positiveHousesByRW = Pemeriksaan::selectRaw('users.RW as RW, count(*) as positive_count')
             ->join('users', 'pemeriksaans.id_user', '=', 'users.id')
             ->where('pemeriksaans.siklus', 4)
+            ->where('pemeriksaans.status_pemeriksaan', 'diterima')
             ->whereYear('pemeriksaans.tgl_pemeriksaan', $selectedYear)
             ->where('pemeriksaans.status_jentik', 'positif')
             ->groupBy('users.RW')
@@ -39,6 +41,7 @@ class DashboardController extends Controller
         $negativeHousesByRW = Pemeriksaan::selectRaw('users.RW as RW, count(*) as negative_count')
             ->join('users', 'pemeriksaans.id_user', '=', 'users.id')
             ->where('pemeriksaans.siklus', 4)
+            ->where('pemeriksaans.status_pemeriksaan', 'diterima')
             ->whereYear('pemeriksaans.tgl_pemeriksaan', $selectedYear)
             ->where('pemeriksaans.status_jentik', 'negatif')
             ->groupBy('users.RW')
@@ -51,7 +54,7 @@ class DashboardController extends Controller
             ->orderBy('year', 'desc')
             ->pluck('year');
 
-        return view('user.index', compact('totalWarga', 'totalRW', 'totalRT', 'positiveHousesByRW','negativeHousesByRW', 'selectedYear', 'years'));
+        return view('user.index', compact('totalWarga', 'totalRW', 'totalRT', 'positiveHousesByRW', 'negativeHousesByRW', 'selectedYear', 'years'));
     }
     // Method untuk mengambil data grafik jumlah rumah positif berdasarkan RW
 

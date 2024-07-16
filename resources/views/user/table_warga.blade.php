@@ -61,6 +61,7 @@
                     <td>{{ $user->alamat }}</td>
                     <td>{{ $user->RT }}</td>
                     <td>{{ $user->RW }}</td>
+                    @if(Auth::check() && Auth::user()->hasRole('Admin'))
                     <td>
                       @if($user->status_akun == 'not_verified')
                       <a href="{{ route('user.verify', $user->id) }}" data-id="{{$user->id}}" class="btn verify-button btn-danger">
@@ -72,7 +73,6 @@
                       </span>
                       @endif
                     </td>
-                    @if(Auth::check() && Auth::user()->hasRole('Admin'))
                     <td>
                       <a href="{{ route('user.edit', $user->id) }}" class="btn btn-primary">
                         <i class="bi bi-pencil-square"></i> <!-- Icon from Bootstrap Icons -->
