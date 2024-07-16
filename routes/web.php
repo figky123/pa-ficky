@@ -63,7 +63,8 @@ Route::get('/laporanRT', [LaporanRTController::class, 'index'])->name('laporan.r
 Route::get('/laporanRW', [LaporanRWController::class, 'index'])->name('laporan.rw');
 Route::get('/laporanlurah', [LaporanLurahController::class, 'index'])->name('laporan.lurah');
 Route::get('/laporan_puskesmas', [TindakanController::class, 'index'])->name('tindakans');
-Route::post('/cek-duplikasi', [PemeriksaanController::class, 'cekDuplikasi'])->name('cek.duplikasi');;
+Route::post('/cek-duplikasi', [PemeriksaanController::class, 'cekDuplikasi'])->name('cek.duplikasi');
+Route::get('laporan-lurah/details/{rw}', [LaporanLurahController::class, 'getDetails'])->name('laporan.lurah.details');
 
 
 //PUSKESMAS

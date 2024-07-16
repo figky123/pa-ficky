@@ -27,6 +27,7 @@ class LaporanLurahController extends Controller
             // Calculate the number of houses inspected with siklus 4 for this RW and selected month/year
             $jumlahrumahdiperiksa = Pemeriksaan::where('id_user', $user->id)
                 ->where('siklus', 4)
+                ->where('status_pemeriksaan', 'diterima')
                 ->whereMonth('tgl_pemeriksaan', $selectedMonth)
                 ->whereYear('tgl_pemeriksaan', $selectedYear)
                 ->count();
@@ -35,6 +36,7 @@ class LaporanLurahController extends Controller
             $jumlahrumahpositif = Pemeriksaan::where('id_user', $user->id)
                 ->where('siklus', 4)
                 ->where('status_jentik', 'positif')
+                ->where('status_pemeriksaan', 'diterima')
                 ->whereMonth('tgl_pemeriksaan', $selectedMonth)
                 ->whereYear('tgl_pemeriksaan', $selectedYear)
                 ->count();

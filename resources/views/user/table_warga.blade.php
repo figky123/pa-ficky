@@ -62,7 +62,7 @@
                     <td>{{ $user->RT }}</td>
                     <td>{{ $user->RW }}</td>
                     <td>
-                      @if($user->status_akun == 'not verified')
+                      @if($user->status_akun == 'not_verified')
                       <a href="{{ route('user.verify', $user->id) }}" data-id="{{$user->id}}" class="btn verify-button btn-danger">
                         <i class="bi bi-x-circle"></i> Verify
                       </a>

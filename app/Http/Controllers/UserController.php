@@ -64,11 +64,12 @@ class UserController extends Controller
             'RT' => $request->RT,
             'RW' => $request->RW,
             'role' => $request->role,
+            'status_akun' => 'verified',
         ]);
 
         return redirect()->route('users')->with('success', 'Data User Berhasil Ditambahkan!');
     }
-    
+
 
 
     public function show(User $user)

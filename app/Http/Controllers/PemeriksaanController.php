@@ -58,7 +58,6 @@ class PemeriksaanController extends Controller
         // Validasi input
         $validatedData = $request->validate([
             'id_user' => 'required|integer|exists:users,id',
-
             'tgl_pemeriksaan' => 'required|date',
             'siklus' => 'required|integer',
             'kaleng_bekas' => 'required|integer|in:1,0,-1',
