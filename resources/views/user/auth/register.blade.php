@@ -89,33 +89,39 @@
                         <div class="text-center">
                             <h1 class="h4 text-gray-900 mb-4">Registrasi Akun!</h1>
                         </div>
-                        <form class="user" method="post" enctype="multipart/form-data" action="/register">
+                        <form class="user" id="formRegister" method="post" enctype="multipart/form-data" action="/register">
                             @csrf
                             <div class="form-group row">
                                 <div class="col-sm-6 mb-3 mb-sm-0">
-                                    <input type="text" class="form-control form-control-user" id="name" name="name" placeholder="Nama" required>
+                                    <input type="text" class="form-control form-control-user" id="name" name="name" placeholder="Nama" value="{{ old('name') }}" required>
                                 </div>
                                 <div class="col-sm-6">
-                                    <input type="text" class="form-control form-control-user" id="no_kk" name="no_kk" placeholder="No KK" required>
+                                    <input type="text" class="form-control form-control-user" id="no_kk" name="no_kk" placeholder="No KK" value="{{ old('no_kk') }}" required>
                                 </div>
                                 <div class="col-sm-6 mb-3 mb-sm-0 mt-3">
-                                    <input type="text" class="form-control form-control-user" id="no_hp_user" name="no_hp_user" placeholder="No HP" required>
+                                    <input type="text" class="form-control form-control-user" id="no_hp_user" name="no_hp_user" placeholder="No HP" value="{{ old('no_hp_user') }}" required>
                                 </div>
                                 <div class="col-sm-6 mt-3">
-                                    <input type="text" class="form-control form-control-user" id="alamat" name="alamat" placeholder="Alamat" required>
+                                    <input type="text" class="form-control form-control-user" id="alamat" name="alamat" placeholder="Alamat" value="{{ old('alamat') }}" required>
                                 </div>
                                 <div class="col-sm-6 mb-3 mb-sm-0 mt-3">
-                                    <input type="text" class="form-control form-control-user" id="RT" name="RT" placeholder="RT" required>
+                                    <input type="text" class="form-control form-control-user" id="RT" name="RT" placeholder="RT" value="{{ old('RT') }}" required>
+                                    <div id="rtWarning" class="text-danger mt-2" style="display: none;">RT hanya bisa menginputkan nilai 1-57</div>
                                 </div>
                                 <div class="col-sm-6 mt-3">
-                                    <input type="text" class="form-control form-control-user" id="RW" name="RW" placeholder="RW" required>
+                                    <input type="text" class="form-control form-control-user" id="RW" name="RW" placeholder="RW" value="{{ old('RW') }}" required>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <input type="email" class="form-control form-control-user" id="email" name="email" placeholder="Email" required>
+                                <input type="email" class="form-control form-control-user" id="email" name="email" placeholder="Email" value="{{ old('email') }}" required>
                             </div>
                             <div class="form-group">
                                 <input type="password" class="form-control form-control-user" id="password" name="password" placeholder="Password" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="file" class="form-control-file" id="foto_kk" name="foto_kk" accept="image/*" required>
+                                <small id="fotoKkHelp" class="form-text text-muted">Upload foto kartu keluarga (format: jpeg, png, jpg, gif, svg | max: 2048 KB).</small>
+                                <div id="fotoKkWarning" class="text-danger mt-2" style="display: none;">Format file tidak valid atau melebihi ukuran maksimum (2048 KB).</div>
                             </div>
                             <!-- Input hidden untuk menyimpan nilai role -->
                             <input type="hidden" name="role" value="Warga">
@@ -135,12 +141,58 @@
     <!-- Bootstrap core JavaScript-->
     <script src="{{ asset('/assets/vendor/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('/assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-
     <!-- Core plugin JavaScript-->
     <script src="{{ asset('/assets/vendor/jquery-easing/jquery.easing.min.js') }}"></script>
-
     <!-- Custom scripts for all pages-->
     <script src="{{ asset('/assets/js/sb-admin-2.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script>
+        $(document).ready(function() {
+            $('#formRegister').on('submit', function(event) {
+                event.preventDefault();
+                var formData = new FormData(this);
+                var url = $(this).attr('action');
+
+                $.ajax({
+                    url: url,
+                    method: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        console.log('Akun berhasil ditambahkan');
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Akun berhasil ditambahkan',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(() => {
+                            location.reload();
+                        });
+                    },
+                    error: function(response) {
+                        console.error('Terjadi kesalahan:', response);
+                        var errorMessage = 'Terjadi kesalahan saat menambahkan data.';
+                        if (response.responseJSON && response.responseJSON.errors) {
+                            errorMessage = '<ul>';
+                            $.each(response.responseJSON.errors, function(key, errors) {
+                                $.each(errors, function(index, error) {
+                                    errorMessage += '<li>' + error + '</li>';
+                                });
+                            });
+                            errorMessage += '</ul>';
+                        }
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal menambahkan data',
+                            html: errorMessage,
+                            showConfirmButton: true
+                        });
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>
