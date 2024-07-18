@@ -184,12 +184,23 @@
                         location.reload(); // Memperbarui tampilan dengan data yang baru ditambahkan
                     });
                 },
-                error: function(xhr, status, error) {
-                    console.error('Terjadi kesalahan:', error);
+                error: function(response) {
+                    console.error('Terjadi kesalahan:', response);
+                    var errorMessage = 'Terjadi kesalahan saat menambahkan data.';
+                    if (response.responseJSON && response.responseJSON.errors) {
+                        errorMessage = '<ul>';
+                        $.each(response.responseJSON.errors, function(key, errors) {
+                            $.each(errors, function(index, error) {
+                                errorMessage += '<li>' + error + '</li>';
+                            });
+                        });
+                        errorMessage += '</ul>';
+                    }
                     Swal.fire({
                         icon: 'error',
-                        title: 'Terjadi kesalahan',
-                        text: 'Silakan coba lagi',
+                        title: 'Gagal menambahkan data',
+                        html: errorMessage,
+                        showConfirmButton: true
                     });
                 }
             });

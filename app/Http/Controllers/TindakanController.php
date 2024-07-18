@@ -7,6 +7,7 @@ use App\Models\tindakan;
 use App\Models\user;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class TindakanController extends Controller
 {
@@ -14,8 +15,7 @@ class TindakanController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    { 
-        {
+    { {
             $tindakans = Tindakan::orderBy('tgl_tindakan', 'asc')->paginate(100);
             return view('user.laporanpuskesmas', compact('tindakans'));
         }
@@ -34,13 +34,48 @@ class TindakanController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'RW' => 'required|string|max:255',
-            'nama_petugas' => 'required|string|max:255',
-            'tgl_tindakan' => 'required|date',
+        $currentDate = now();
+        $startOfWeek = $currentDate->startOfWeek()->format('Y-m-d');
+        $endOfWeek = $currentDate->endOfWeek()->format('Y-m-d');
+
+        $validator = Validator::make($request->all(), [
+            'RW' => 'required|numeric|between:1,12',
+            'nama_petugas' => 'required|string|max:255|regex:/^[a-zA-Z\s]*$/',
+            'tgl_tindakan' => 'required|date|after_or_equal:' . $startOfWeek . '|before_or_equal:' . $endOfWeek,
             'ket_tindakan' => 'required|string|max:255',
             'bukti_tindakan' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ], [
+            'RW.required' => 'RW harus diisi.',
+            'RW.numeric' => 'RW harus berupa angka.',
+            'RW.between' => 'RW harus antara 1 hingga 12.',
+
+            'nama_petugas.required' => 'Nama petugas harus diisi.',
+            'nama_petugas.string' => 'Nama petugas harus berupa huruf.',
+            'nama_petugas.max' => 'Nama petugas tidak boleh lebih dari 255 karakter.',
+            'nama_petugas.regex' => 'Nama petugas hanya boleh mengandung huruf dan spasi.',
+
+            'tgl_tindakan.required' => 'Tanggal tindakan harus diisi.',
+            'tgl_tindakan.date' => 'Format tanggal tindakan tidak valid.',
+            'tgl_tindakan.after_or_equal' => 'Tanggal tindakan tidak boleh mundur dari minggu ini.',
+            'tgl_tindakan.before_or_equal' => 'Tanggal tindakan tidak boleh lebih dari minggu ini.',
+
+            'ket_tindakan.required' => 'Keterangan tindakan harus diisi.',
+            'ket_tindakan.string' => 'Keterangan tindakan harus berupa string.',
+            'ket_tindakan.max' => 'Keterangan tindakan tidak boleh lebih dari 255 karakter.',
+
+            'bukti_tindakan.required' => 'Bukti tindakan harus diisi.',
+            'bukti_tindakan.image' => 'Bukti tindakan harus berupa gambar.',
+            'bukti_tindakan.mimes' => 'Bukti tindakan harus berupa file dengan format: jpeg, png, jpg, gif, svg.',
+            'bukti_tindakan.max' => 'Ukuran file bukti tindakan tidak boleh lebih dari 2048KB.',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Validation error',
+                'errors' => $validator->errors()
+            ], 400);
+        }
 
         $bukti_tindakan = $request->file('bukti_tindakan');
         $file_ext = pathinfo($bukti_tindakan->getClientOriginalName(), PATHINFO_EXTENSION);
@@ -49,23 +84,21 @@ class TindakanController extends Controller
 
         try {
             // Simpan data ke dalam database
-            $tindakan = new tindakan();
-            $tindakan->RW = $request->RW;
-            $tindakan->nama_petugas = $request->nama_petugas;
-            $tindakan->ket_tindakan = $request->ket_tindakan;
-            $tindakan->bukti_tindakan = $file_name;
-            $tindakan->tgl_tindakan = $request->tgl_tindakan;
-            $tindakan->save();
-
+            $tindakan = Tindakan::create([
+                'RW' => $request->RW,
+                'nama_petugas' => $request->nama_petugas,
+                'ket_tindakan' => $request->ket_tindakan,
+                'bukti_tindakan' => $file_name,
+                'tgl_tindakan' => $request->tgl_tindakan,
+            ]);
 
             // Jika berhasil disimpan, kembalikan respons
             return response()->json(['message' => 'Data berhasil disimpan'], 200);
         } catch (\Exception $e) {
-            // Jika terjadi kesalahan, kembalikan respons dengan pesan error
+            // Kesalahan umum
             return response()->json(['message' => 'Terjadi kesalahan: ' . $e->getMessage()], 500);
         }
     }
-
     /**
      * Display the specified resource.
      */

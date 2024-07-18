@@ -66,15 +66,52 @@ class AuthController extends Controller
     {
 
         $validator = Validator::make($request->all(), [
-            'name' => "required|string|max:255|regex:/^[a-zA-Z\s]*$/",
-            'email' => "required|email|max:255",
-            'password' => "required|string|min:8|max:255",
-            'no_kk' => "required|numeric|digits:16",
-            'no_hp_user' => "required|numeric|min:10|max:15",
-            'alamat' => "required|string|max:255",
-            'RT' => "required|numeric|max:10",
-            'RW' => "required|numeric|max:10",
-            'role' => "required",
+            'name' => 'required|string|max:255|regex:/^[a-zA-Z\s]*$/',
+            'email' => 'required|email|max:255|unique:users,email',
+            'password' => 'required|string|min:8|max:255',
+            'no_kk' => 'required|numeric|digits:16|unique:users,no_kk',
+            'no_hp_user' => 'required|numeric|digits_between:10,13',
+            'alamat' => 'required|string|max:255',
+            'RT' => 'required|numeric|between:1,57',
+            'RW' => 'required|numeric|between:1,12',
+            'role' => 'required|string',
+        ], [
+            'name.required' => 'Nama harus diisi.',
+            'name.string' => 'Nama harus berupa huruf.',
+            'name.max' => 'Nama tidak boleh lebih dari 255 karakter.',
+            'name.regex' => 'Nama hanya boleh mengandung huruf dan spasi.',
+            
+            'email.required' => 'Email harus diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'email.max' => 'Email tidak boleh lebih dari 255 karakter.',
+            'email.unique' => 'Email sudah terdaftar.',
+            
+            'password.required' => 'Kata sandi harus diisi.',
+            'password.string' => 'Kata sandi harus berupa string.',
+            'password.min' => 'Kata sandi minimal harus 8 karakter.',
+            'password.max' => 'Kata sandi tidak boleh lebih dari 255 karakter.',
+            
+            'no_kk.required' => 'Nomor KK harus diisi.',
+            'no_kk.numeric' => 'Nomor KK harus berupa angka.',
+            'no_kk.digits' => 'Nomor KK harus 16 digit.',
+            'no_kk.unique' => 'Nomor KK sudah terdaftar.',
+            
+            'no_hp_user.required' => 'Nomor HP harus diisi.',
+            'no_hp_user.numeric' => 'Nomor HP harus berupa angka.',
+            'no_hp_user.digits_between' => 'Nomor HP harus antara 10 hingga 13 digit.',
+            
+            'alamat.required' => 'Alamat harus diisi.',
+            'alamat.string' => 'Alamat harus berupa string.',
+            'alamat.max' => 'Alamat tidak boleh lebih dari 255 karakter.',
+            
+            'RT.required' => 'RT harus diisi.',
+            'RT.numeric' => 'RT harus berupa angka.',
+            'RT.between' => 'RT harus antara 1 hingga 57.',
+            
+            'RW.required' => 'RW harus diisi.',
+            'RW.numeric' => 'RW harus berupa angka.',
+            'RW.between' => 'RW harus antara 1 hingga 12.',
+            
         ]);
 
         if ($validator->fails()) {
