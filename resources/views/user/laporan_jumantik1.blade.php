@@ -25,7 +25,7 @@
 @endif
 <main id="main" class="main">
     <div class="pagetitle">
-        <h1>Laporan Jumantik</h1>
+        <h1>Laporan Warga</h1>
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="index.html">Home</a></li>
@@ -43,7 +43,7 @@
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Laporan Jumantik</h5>
+                        <h5 class="card-title"></h5>
                         @php
                         $user = Auth::user(); // Get the currently logged-in user
                         @endphp

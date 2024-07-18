@@ -106,7 +106,7 @@
             <li class="nav-item">
                 <a class="nav-link collapsed" href="laporanlurah">
                     <i class="bi bi-file-earmark-text"></i>
-                    <span>Laporan Lurah</span>
+                    <span>Laporan Jumantik III</span>
                 </a>
             </li>
             <li class="nav-item">
@@ -125,7 +125,7 @@
             <li class="nav-item">
                 <a class="nav-link collapsed" href="laporan_jumantik1">
                     <i class="bi bi-file-earmark-text"></i>
-                    <span>Laporan Jumantik </span>
+                    <span>Laporan Pemeriksaan Warga</span>
                 </a>
             </li>
             <li class="nav-item">
@@ -142,15 +142,15 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link collapsed" href="laporanRT">
+                <a class="nav-link collapsed" href="laporan_jumantik1">
                     <i class="bi bi-file-earmark-text"></i>
-                    <span>Laporan RT </span>
+                    <span>Laporan Warga</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link collapsed" href="laporan_jumantik1">
+                <a class="nav-link collapsed" href="laporanRT">
                     <i class="bi bi-file-earmark-text"></i>
-                    <span>Laporan Jumantik </span>
+                    <span>Laporan Jumantik I</span>
                 </a>
             </li>
             @elseif(Auth::user()->role == 'RW')
@@ -163,13 +163,13 @@
             <li class="nav-item">
                 <a class="nav-link collapsed" href="laporanRT">
                     <i class="bi bi-file-earmark-text"></i>
-                    <span>Laporan RT</span>
+                    <span>Laporan Jumantik I</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link collapsed" href="laporanRW">
                     <i class="bi bi-file-earmark-text"></i>
-                    <span>Laporan RW</span>
+                    <span>Laporan Jumantik II</span>
                 </a>
             </li>
             @elseif(Auth::user()->role == 'Admin')
@@ -219,19 +219,19 @@
             <li class="nav-item">
                 <a class="nav-link collapsed" href="laporanRT">
                     <i class="bi bi-file-earmark-text"></i>
-                    <span>Laporan RT</span>
+                    <span>Laporan Jumantik I</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link collapsed" href="laporanRW">
                     <i class="bi bi-file-earmark-text"></i>
-                    <span>Laporan RW</span>
+                    <span>Laporan Jumantik II</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link collapsed" href="laporanlurah">
                     <i class="bi bi-file-earmark-text"></i>
-                    <span>Laporan Lurah</span>
+                    <span>Laporan Jumantik III</span>
                 </a>
             </li>
             <li class="nav-item">

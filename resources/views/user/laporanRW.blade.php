@@ -14,7 +14,7 @@
 @section('content')
 <main id="main" class="main">
     <div class="pagetitle">
-        <h1>Laporan RW</h1>
+        <h1>Laporan Jumantik II</h1>
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="index.html">Home</a></li>
@@ -27,9 +27,16 @@
     <section class="section">
         <div class="row">
             <div class="col-lg-12">
+                 <!-- Information Alert -->
+                 <div class="alert alert-info alert-dismissible fade show" role="alert">
+                    <strong>Informasi Laporan:</strong> Laporan ini berisikan hasil perhitungan pemeriksaan jentik yang dilakukan oleh warga pada siklus ke-4 berdasarkan RT.
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Laporan RW</h5>
+                        <h5 class="card-title"></h5>
 
                         <!-- Month and Year Filter Form -->
                         <form method="GET" action="{{ route('laporan.rw') }}">
