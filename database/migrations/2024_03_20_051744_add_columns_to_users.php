@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('alamat');
             $table->string('RT');
             $table->string('RW');
+            $table->string('foto_kk');
             $table->enum('role', ['Jumantik', 'Puskesmas', 'Lurah', 'Warga', 'Admin']);
             $table->timestamps();
         });

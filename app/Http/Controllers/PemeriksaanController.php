@@ -75,6 +75,15 @@ class PemeriksaanController extends Controller
         $id_user = $request->input('id_user');
         $tgl_pemeriksaan = $request->input('tgl_pemeriksaan');
 
+        // Validasi tambahan untuk memastikan tanggal pemeriksaan hanya dalam minggu ini
+        $startOfWeek = Carbon::now()->startOfWeek();
+        $endOfWeek = Carbon::now()->endOfWeek();
+
+        if (Carbon::parse($tgl_pemeriksaan)->lt($startOfWeek) || Carbon::parse($tgl_pemeriksaan)->gt($endOfWeek)) {
+            return response()->json(['error' => 'Tanggal pemeriksaan harus dalam minggu ini.'], 400);
+        }
+
+
         // Cek apakah sudah ada pemeriksaan dalam minggu yang sama
         $startOfWeek = Carbon::parse($tgl_pemeriksaan)->startOfWeek();
         $endOfWeek = Carbon::parse($tgl_pemeriksaan)->endOfWeek();

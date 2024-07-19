@@ -28,7 +28,8 @@ class user extends Authenticatable
         'role',
         'alamat',
         'RT',
-        'RW'
+        'RW',
+        'foto_kk'
     ];
 
     public function laporans()

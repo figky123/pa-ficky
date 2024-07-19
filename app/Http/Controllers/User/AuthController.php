@@ -49,7 +49,7 @@ class AuthController extends Controller
 
         if ($user && Hash::check($request->password, $user->password)) {
             if ($user->status_akun !== 'verified') {
-                return back()->with('error', 'Akun belum diverifikasi, silahkan hubungi admin untuk lebih lanjut');
+                return back()->with('error', 'Akun belum diverifikasi, silahkan hubungi adm@lurah.gmail.com untuk lebih lanjut');
             }
 
             Auth::login($user);
