@@ -17,7 +17,8 @@
     Swal.fire({
         icon: 'success',
         title: 'Status Pemeriksaan Telah Diperbarui',
-        text: '{{ session('success ') }}',
+        text: '{{ session('
+        success ') }}',
         showConfirmButton: false,
         timer: 1500
     });
@@ -62,22 +63,18 @@
                         $jumlah = $pemeriksaan->bak_mandi + $pemeriksaan->ember + $pemeriksaan->vas_bunga + $pemeriksaan->lainnya_dalam + $pemeriksaan->ban_bekas + $pemeriksaan->kaleng_bekas;
                         return $jumlah > 0;
                         })->count();
-
                         $negatif = $pemeriksaans->count() - $positif;
                         @endphp
-
                         @if ($positif > 0)
                         <div class="alert alert-danger" role="alert">
                             Terdapat {{ $positif }} lokasi dengan status jentik positif.
                         </div>
                         @endif
-
                         @if ($negatif > 0)
                         <div class="alert alert-success" role="alert">
                             Terdapat {{ $negatif }} lokasi dengan status jentik negatif.
                         </div>
                         @endif
-
                         @if ($positif == 0 && $negatif == 0)
                         <div class="alert alert-info" role="alert">
                             Tidak ada data jentik yang tersedia.
@@ -90,7 +87,6 @@
                                 <thead>
                                     <tr>
                                         <th>Nama Kepala Keluarga</th>
-
                                         <th>Siklus</th>
                                         <th>Alamat</th>
                                         <th>RT</th>
@@ -130,8 +126,9 @@
                                         <td>
                                             @if($pemeriksaan->status_pemeriksaan == 'proses')
                                             <div class="btn-group" role="group">
-                                                <a href="{{ route('update_status', ['id' => $pemeriksaan->id, 'status' => 'diterima']) }}" class="btn btn-success btn-sm" onclick="return confirm('Apakah Anda yakin laporan ini akan diterima?')">Terima</a>
-                                                <a href="{{ route('update_status', ['id' => $pemeriksaan->id, 'status' => 'ditolak']) }}" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin laporan ini akan ditolak?')">Tolak</a>
+                                                <a href="{{ route('update_status', ['id' => $pemeriksaan->id, 'status' => 'diterima']) }}" class="btn btn-primary btn-sm" data-id="{{ $pemeriksaan->id }}" id="verifikasiButton" title="Klik untuk memverifikasi laporan">
+                                                    </i> Verifikasi Data
+                                                </a>
                                             </div>
                                             @else
                                             @if ($pemeriksaan->status_pemeriksaan == 'diterima')
@@ -169,7 +166,6 @@
                                     </tr>
                                     @endforeach
                                 </tbody>
-
                             </table>
                         </div><!-- End Table with stripped rows -->
                         <!-- Keterangan di atas tabel -->
@@ -227,10 +223,14 @@
                         <label for="name">Nama Kepala Keluarga</label>
                         <input type="text" id="name" name="name" class="form-control" value="{{ Auth::user()->name }}" readonly>
                     </div>
-
                     <div class="form-group">
                         <label for="siklus">Siklus</label>
-                        <input type="text" class="form-control" id="siklus" name="siklus" placeholder="Masukkan Siklus" required>
+                        <select name="siklus" id="siklus" class="form-control">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="tgl_pemeriksaan">Tanggal Pemeriksaan</label>
@@ -293,8 +293,9 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="bukti_pemeriksaan">Bukti Pemeriksaan</label>
-                        <input type="file" name="bukti_pemeriksaan" id="bukti_pemeriksaan" class="form-control">
+                        <input type="file" class="form-control-file" id="bukti_pemeriksaan" name="bukti_pemeriksaan" accept="image/*" required>
+                        <small id="fotoKkHelp" class="form-text text-muted">Upload foto pemeriksaan (format: jpeg, png, jpg, gif, svg | max: 2048 KB).</small>
+                        <div id="fotoKkWarning" class="text-danger mt-2" style="display: none;">Format file tidak valid atau melebihi ukuran maksimum (2048 KB).</div>
                     </div>
                     <div class="form-group">
                         <label for="ket_pemeriksaan">Keterangan Pemeriksaan</label>
@@ -336,44 +337,59 @@
             $('#modalImage').attr('src', imageUrl);
             $('#createdAtText').text('Waktu Pemeriksaan: ' + new Date(createdAt).toLocaleString());
         });
+
         $('#formTambahData').on('submit', function(event) {
             event.preventDefault();
             var formData = new FormData(this);
             var url = $(this).attr('action');
 
-            $.ajax({
-                url: url,
-                method: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function(response) {
-                    console.log('Data berhasil ditambahkan');
-                    $('#tambahDataModal').modal('hide');
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Data berhasil ditambahkan',
-                        showConfirmButton: false,
-                        timer: 1500
-                    }).then(() => {
-                        location.reload();
+            // Show confirmation message
+            Swal.fire({
+                title: 'Konfirmasi',
+                text: 'Apakah data pemeriksaan yang Anda inputkan sudah benar?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, benar!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: url,
+                        method: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function(response) {
+                            console.log('Data berhasil ditambahkan');
+                            $('#tambahDataModal').modal('hide');
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Data berhasil ditambahkan',
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(() => {
+                                location.reload();
+                            });
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Terjadi kesalahan:', error);
+                            if (xhr.status === 400) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Terjadi Kesalahan',
+                                    text: xhr.responseJSON.error,
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Terjadi kesalahan',
+                                    text: 'Silakan coba lagi.',
+                                });
+                            }
+                        }
                     });
-                },
-                error: function(xhr, status, error) {
-                    console.error('Terjadi kesalahan:', error);
-                    if (xhr.status === 400) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Duplikasi Data',
-                            text: xhr.responseJSON.error,
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Terjadi kesalahan',
-                            text: 'Silakan coba lagi.',
-                        });
-                    }
                 }
             });
         });
@@ -398,80 +414,28 @@
                 }
             });
         });
+        // Handler untuk tombol verifikasi
+        $('#verifikasiButton').on('click', function(event) {
+            event.preventDefault(); // Mencegah tindakan default tombol
+
+            var id = $(this).data('id');
+            var url = "{{ route('update_status', ['id' => ':id', 'status' => 'diterima']) }}".replace(':id', id);
+
+            Swal.fire({
+                title: 'Konfirmasi',
+                text: 'Apakah Anda yakin laporan ini akan diverifikasi?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, verifikasi!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = url;
+                }
+            });
+        });
     });
-
-    function confirmAccept(id) {
-        Swal.fire({
-            title: 'Konfirmasi',
-            text: 'Apakah Anda yakin laporan ini akan diterima?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Ya, terima!',
-            cancelButtonText: 'Batal'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: "{{ route('update_status', ['id' => ':id', 'status' => 'diterima']) }}".replace(':id', id),
-                    method: 'GET',
-                    success: function(response) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Laporan berhasil diterima',
-                            showConfirmButton: false,
-                            timer: 1500
-                        }).then(() => {
-                            location.reload();
-                        });
-                    },
-                    error: function() {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Terjadi kesalahan',
-                            text: 'Silakan coba lagi.',
-                        });
-                    }
-                });
-            }
-        });
-    }
-
-    function confirmReject(id) {
-        Swal.fire({
-            title: 'Konfirmasi',
-            text: 'Apakah Anda yakin laporan ini akan ditolak?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Ya, tolak!',
-            cancelButtonText: 'Batal'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: "{{ route('update_status', ['id' => ':id', 'status' => 'ditolak']) }}".replace(':id', id),
-                    method: 'GET',
-                    success: function(response) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Laporan berhasil ditolak',
-                            showConfirmButton: false,
-                            timer: 1500
-                        }).then(() => {
-                            location.reload();
-                        });
-                    },
-                    error: function() {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Terjadi kesalahan',
-                            text: 'Silakan coba lagi.',
-                        });
-                    }
-                });
-            }
-        });
-    }
 </script>
 @endsection

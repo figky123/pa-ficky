@@ -120,8 +120,9 @@
                         <input type="text" id="ket_tindakan" name="ket_tindakan" class="form-control" required>
                     </div>
                     <div class="form-group">
-                        <label for="bukti_tindakan">Bukti tindakan</label>
-                        <input type="file" name="bukti_tindakan" id="bukti_tindakan" class="form-control">
+                        <input type="file" class="form-control-file" id="bukti_tindakan" name="bukti_tindakan" accept="image/*" required>
+                        <small id="fotoKkHelp" class="form-text text-muted">Upload foto tindakan (format: jpeg, png, jpg, gif, svg | max: 2048 KB).</small>
+                        <div id="fotoKkWarning" class="text-danger mt-2" style="display: none;">Format file tidak valid atau melebihi ukuran maksimum (2048 KB).</div>
                     </div>
                     <!-- Add other fields as necessary -->
                     <div class="modal-footer">

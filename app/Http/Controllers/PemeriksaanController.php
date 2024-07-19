@@ -71,24 +71,19 @@ class PemeriksaanController extends Controller
             'ket_pemeriksaan' => 'required|string|max:255',
         ]);
 
-        // Ambil data dari request
-        $id_user = $request->input('id_user');
-        $tgl_pemeriksaan = $request->input('tgl_pemeriksaan');
-
         // Validasi tambahan untuk memastikan tanggal pemeriksaan hanya dalam minggu ini
-        $startOfWeek = Carbon::now()->startOfWeek();
-        $endOfWeek = Carbon::now()->endOfWeek();
+        $startOfWeek = now()->startOfWeek()->format('Y-m-d');
+        $endOfWeek = now()->endOfWeek()->format('Y-m-d');
 
-        if (Carbon::parse($tgl_pemeriksaan)->lt($startOfWeek) || Carbon::parse($tgl_pemeriksaan)->gt($endOfWeek)) {
+        if (Carbon::parse($validatedData['tgl_pemeriksaan'])->lt($startOfWeek) || Carbon::parse($validatedData['tgl_pemeriksaan'])->gt($endOfWeek)) {
             return response()->json(['error' => 'Tanggal pemeriksaan harus dalam minggu ini.'], 400);
         }
 
-
         // Cek apakah sudah ada pemeriksaan dalam minggu yang sama
-        $startOfWeek = Carbon::parse($tgl_pemeriksaan)->startOfWeek();
-        $endOfWeek = Carbon::parse($tgl_pemeriksaan)->endOfWeek();
+        $startOfWeek = Carbon::parse($validatedData['tgl_pemeriksaan'])->startOfWeek();
+        $endOfWeek = Carbon::parse($validatedData['tgl_pemeriksaan'])->endOfWeek();
 
-        $existingPemeriksaan = Pemeriksaan::where('id_user', $id_user)
+        $existingPemeriksaan = Pemeriksaan::where('id_user', $validatedData['id_user'])
             ->whereBetween('tgl_pemeriksaan', [$startOfWeek, $endOfWeek])
             ->exists();
 
@@ -143,7 +138,7 @@ class PemeriksaanController extends Controller
                 'RW' => $RW,
                 'alamat' => $alamat,
             ];
-            Mail::to('admlurah@gmail.com')->send(new PemeriksaanNotification($data));
+            Mail::to('admlurah@gmail.com')->cc('puskesmas@gmail.com')->send(new PemeriksaanNotification($data));
         }
 
         return redirect()->route('pemeriksaans')
