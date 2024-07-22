@@ -70,56 +70,56 @@ class PemeriksaanController extends Controller
             'bukti_pemeriksaan' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'ket_pemeriksaan' => 'required|string|max:255',
         ]);
-    
+
         // Validasi tambahan untuk memastikan tanggal pemeriksaan hanya dalam minggu ini
         $startOfWeek = now()->startOfWeek()->format('Y-m-d');
         $endOfWeek = now()->endOfWeek()->format('Y-m-d');
-    
+
         if (Carbon::parse($validatedData['tgl_pemeriksaan'])->lt($startOfWeek) || Carbon::parse($validatedData['tgl_pemeriksaan'])->gt($endOfWeek)) {
             return response()->json(['error' => 'Tanggal pemeriksaan harus dalam minggu ini.'], 400);
         }
-    
+
         // Cek apakah sudah ada pemeriksaan dalam minggu yang sama
         $startOfWeek = Carbon::parse($validatedData['tgl_pemeriksaan'])->startOfWeek();
         $endOfWeek = Carbon::parse($validatedData['tgl_pemeriksaan'])->endOfWeek();
-    
+
         $existingPemeriksaan = Pemeriksaan::where('id_user', $validatedData['id_user'])
             ->whereBetween('tgl_pemeriksaan', [$startOfWeek, $endOfWeek])
             ->exists();
-    
+
         if ($existingPemeriksaan) {
             return response()->json(['error' => 'Anda telah menginput data untuk minggu ini. Harap tunggu sampai minggu depan untuk menginput data baru.'], 400);
         }
-    
+
         // Cek apakah sudah ada pemeriksaan dengan siklus yang sama dalam bulan yang sama
         $startOfMonth = Carbon::parse($validatedData['tgl_pemeriksaan'])->startOfMonth();
         $endOfMonth = Carbon::parse($validatedData['tgl_pemeriksaan'])->endOfMonth();
-    
+
         $existingSiklusInMonth = Pemeriksaan::where('id_user', $validatedData['id_user'])
             ->where('siklus', $validatedData['siklus'])
             ->whereBetween('tgl_pemeriksaan', [$startOfMonth, $endOfMonth])
             ->exists();
-    
+
         if ($existingSiklusInMonth) {
             return response()->json(['error' => 'Anda telah menginput data siklus ini dalam bulan ini. Harap tunggu sampai bulan depan untuk menginput data baru.'], 400);
         }
-    
+
         // Retrieve and process boolean values
         $keys = ['kaleng_bekas', 'ember', 'ban_bekas', 'vas_bunga', 'bak_mandi', 'lainnya_dalam', 'lainnya_luar'];
         $values = array_map(fn ($key) => $request->input($key), $keys);
-    
+
         // Hitung penjumlahan nilai, abaikan nilai -1
         $sum = array_sum(array_filter($values, fn ($value) => $value != -1));
-    
+
         // Tentukan status_jentik berdasarkan hasil penjumlahan
         $status_jentik = $sum > 0 ? 'positif' : 'negatif';
-    
+
         // Handle file upload with try-catch
         $bukti_pemeriksaan = $request->file('bukti_pemeriksaan');
         $file_ext = pathinfo($bukti_pemeriksaan->getClientOriginalName(), PATHINFO_EXTENSION);
         $file_name = 'bukti_tindakan_' . date('YmdHi') . '.' . $file_ext;
         $bukti_pemeriksaan->move(public_path('storage/bukti_pemeriksaan'), $file_name);
-    
+
         // Simpan ke database
         $pemeriksaan = new Pemeriksaan();
         $pemeriksaan->id_user = $validatedData['id_user'];
@@ -131,15 +131,15 @@ class PemeriksaanController extends Controller
         }
         $pemeriksaan->status_jentik = $status_jentik;
         $pemeriksaan->ket_pemeriksaan = $validatedData['ket_pemeriksaan'];
-    
+
         $pemeriksaan->save();
-    
+
         // Retrieve user data
         $user = User::find($validatedData['id_user']);
         $RT = $user->RT;
         $RW = $user->RW;
         $alamat = $user->alamat;
-    
+
         // Send email notification if siklus is 4 and status_jentik is positif
         if ($pemeriksaan->siklus == 4 && $pemeriksaan->status_jentik == 'positif') {
             $data = [
@@ -153,7 +153,7 @@ class PemeriksaanController extends Controller
             ];
             Mail::to('admlurah@gmail.com')->cc('puskesmas@gmail.com')->send(new PemeriksaanNotification($data));
         }
-    
+
         return redirect()->route('pemeriksaans')
             ->with('success', 'Data pemeriksaan berhasil disimpan.');
     }

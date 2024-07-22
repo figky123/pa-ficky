@@ -104,7 +104,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <form id="addUserForm" method="POST" action="{{ route('user.store') }}">
+        <form id="addUserForm" method="POST" action="{{ route('user.store') }}" enctype="multipart/form-data">
           @csrf
           <div class="form-group">
             <label for="name">Nama</label>
@@ -151,6 +151,12 @@
               <option value="RW">RW</option>
             </select>
           </div>
+          <div class="form-group">
+            <label for="foto_kk">Foto KK</label>
+            <input type="file" class="form-control-file" id="foto_kk" name="foto_kk" accept="image/*" required>
+            <small id="fotoKkHelp" class="form-text text-muted">Upload foto KK (format: jpeg, png, jpg, gif, svg | max: 2048 KB).</small>
+            <div id="fotoKkWarning" class="text-danger mt-2" style="display: none;">Format file tidak valid atau melebihi ukuran maksimum (2048 KB).</div>
+          </div>
           <button type="submit" class="btn btn-primary">Tambah</button>
         </form>
       </div>
@@ -159,18 +165,19 @@
 </div>
 
 <!-- Include Script for DataTable and Modal -->
+
+<!-- Include Script for DataTable, Modal, and Form Validation -->
 <script>
- 
- document.addEventListener('DOMContentLoaded', function() {
-    // Select all elements with class 'verify-button'
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialize DataTable
+    const dataTable = new simpleDatatables.DataTable('#dataTable');
+
+    // Handle verify button click
     const verifyButtons = document.querySelectorAll('.verify-button');
-    // Loop through each verify button and attach click event listener
     verifyButtons.forEach(button => {
       button.addEventListener('click', function(event) {
-        event.preventDefault(); // Prevent default button behavior
-        const userId = this.getAttribute('data-id'); // Get user ID from data-id attribute
-        console.log(this.get)
-        // Confirm verification action using SweetAlert
+        event.preventDefault();
+        const userId = this.getAttribute('data-id');
         Swal.fire({
           title: 'Verifikasi Akun',
           text: 'Apakah Anda yakin ingin memverifikasi akun ini?',
@@ -180,9 +187,7 @@
           cancelButtonColor: '#d33',
           confirmButtonText: 'Ya, verifikasi!'
         }).then((result) => {
-          console.log(userId)
           if (result.isConfirmed) {
-            // Perform AJAX request to verify user account
             $.ajax({
               url: '{{ route("user.verify") }}',
               method: 'POST',
@@ -192,23 +197,99 @@
               },
               success: function(response) {
                 if (response.status) {
-                  // Show success message using SweetAlert
-                  Swal.fire('Berhasil!', response.message, 'success').then(() => {
-                    location.reload(); // Reload page after successful verification
+                  Swal.fire({
+                    title: 'Berhasil!',
+                    text: response.message,
+                    icon: 'success',
+                    showConfirmButton: false,
+                    timer: 1500
+                  }).then(() => {
+                    location.reload();
                   });
                 } else {
-                  // Show error message using SweetAlert
-                  Swal.fire('Gagal!', response.message, 'error');
+                  Swal.fire({
+                    title: 'Gagal!',
+                    text: response.message,
+                    icon: 'error',
+                    showConfirmButton: true
+                  });
                 }
               },
               error: function(xhr, status, error) {
-                // Handle AJAX errors if any
                 console.error('AJAX Error:', error);
-                Swal.fire('Error!', 'Terjadi kesalahan saat memverifikasi akun.', 'error');
+                Swal.fire({
+                  title: 'Error!',
+                  text: 'Terjadi kesalahan saat memverifikasi akun.',
+                  icon: 'error',
+                  showConfirmButton: true
+                });
               }
             });
           }
         });
+      });
+    });
+
+    // Handle file input change event for foto_kk
+    $('#foto_kk').on('change', function(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const fileType = file.type;
+        const fileSize = file.size;
+        const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/svg+xml'];
+
+        if (!validTypes.includes(fileType) || fileSize > 2048000) {
+          $('#fotoKkWarning').show();
+          $(this).val(''); // Clear the input
+        } else {
+          $('#fotoKkWarning').hide();
+        }
+      }
+    });
+
+    // Modal tambah data
+    $('#addUserForm').on('submit', function(event) {
+      event.preventDefault();
+      var formData = new FormData(this);
+      var url = $(this).attr('action');
+
+      $.ajax({
+        url: url,
+        method: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+          console.log('Data berhasil ditambahkan');
+          $('#addUserModal').modal('hide'); // Menutup modal setelah menambahkan data
+          Swal.fire({
+            title: 'Data berhasil ditambahkan',
+            icon: 'success',
+            showConfirmButton: false,
+            timer: 1500
+          }).then(() => {
+            location.reload(); // Memperbarui tampilan dengan data yang baru ditambahkan
+          });
+        },
+        error: function(response) {
+          console.error('Terjadi kesalahan:', response);
+          let errorMessage = 'Terjadi kesalahan saat menambahkan data.';
+          if (response.responseJSON && response.responseJSON.errors) {
+            errorMessage = '<ul>';
+            $.each(response.responseJSON.errors, function(key, errors) {
+              $.each(errors, function(index, error) {
+                errorMessage += '<li>' + error + '</li>';
+              });
+            });
+            errorMessage += '</ul>';
+          }
+          Swal.fire({
+            title: 'Gagal menambahkan data',
+            html: errorMessage,
+            icon: 'error',
+            showConfirmButton: true
+          });
+        }
       });
     });
   });
