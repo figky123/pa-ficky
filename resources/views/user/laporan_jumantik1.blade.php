@@ -114,13 +114,13 @@
                                         <td>{{ $pemeriksaan->user->RT }}</td>
                                         <td>{{ $pemeriksaan->user->RW }}</td>
                                         <td>{{ \Carbon\Carbon::parse($pemeriksaan->tgl_pemeriksaan)->translatedFormat('j F Y') }}</td>
-                                        <td>{!! $pemeriksaan->bak_mandi == 1 ? '<i class="fas fa-plus-circle" style="color: red;"></i>' : ($pemeriksaan->bak_mandi == 0 ? '<i class="fas fa-minus-circle" style="color: green;"></i>' : 'Tidak ada') !!}</td>
-                                        <td>{!! $pemeriksaan->ember == 1 ? '<i class="fas fa-plus-circle" style="color: red;"></i>' : ($pemeriksaan->ember == 0 ? '<i class="fas fa-minus-circle" style="color: green;"></i>' : 'Tidak ada') !!}</td>
-                                        <td>{!! $pemeriksaan->vas_bunga == 1 ? '<i class="fas fa-plus-circle" style="color: red;"></i>' : ($pemeriksaan->vas_bunga == 0 ? '<i class="fas fa-minus-circle" style="color: green;"></i>' : 'Tidak ada') !!}</td>
-                                        <td>{!! $pemeriksaan->lainnya_dalam == 1 ? '<i class="fas fa-plus-circle" style="color: red;"></i>' : ($pemeriksaan->lainnya_dalam == 0 ? '<i class="fas fa-minus-circle" style="color: green;"></i>' : 'Tidak ada') !!}</td>
-                                        <td>{!! $pemeriksaan->ban_bekas == 1 ? '<i class="fas fa-plus-circle" style="color: red;"></i>' : ($pemeriksaan->ban_bekas == 0 ? '<i class="fas fa-minus-circle" style="color: green;"></i>' : 'Tidak ada') !!}</td>
-                                        <td>{!! $pemeriksaan->kaleng_bekas == 1 ? '<i class="fas fa-plus-circle" style="color: red;"></i>' : ($pemeriksaan->kaleng_bekas == 0 ? '<i class="fas fa-minus-circle" style="color: green;"></i>' : 'Tidak ada') !!}</td>
-                                        <td>{!! $pemeriksaan->lainnya_luar == 1 ? '<i class="fas fa-plus-circle" style="color: red;"></i>' : ($pemeriksaan->lainnya_luar == 0 ? '<i class="fas fa-minus-circle" style="color: green;"></i>' : 'Tidak ada') !!}</td>
+                                        <td>{!! $pemeriksaan->bak_mandi == 1 ? '<i class="fas fa-plus-circle" style="color: red;"></i>' : '<i class="fas fa-minus-circle" style="color: green;"></i>' !!}</td>
+                                        <td>{!! $pemeriksaan->ember == 1 ? '<i class="fas fa-plus-circle" style="color: red;"></i>' : '<i class="fas fa-minus-circle" style="color: green;"></i>' !!}</td>
+                                        <td>{!! $pemeriksaan->vas_bunga == 1 ? '<i class="fas fa-plus-circle" style="color: red;"></i>' : '<i class="fas fa-minus-circle" style="color: green;"></i>' !!}</td>
+                                        <td>{!! $pemeriksaan->lainnya_dalam == 1 ? '<i class="fas fa-plus-circle" style="color: red;"></i>' : '<i class="fas fa-minus-circle" style="color: green;"></i>' !!}</td>
+                                        <td>{!! $pemeriksaan->ban_bekas == 1 ? '<i class="fas fa-plus-circle" style="color: red;"></i>' : '<i class="fas fa-minus-circle" style="color: green;"></i>' !!}</td>
+                                        <td>{!! $pemeriksaan->kaleng_bekas == 1 ? '<i class="fas fa-plus-circle" style="color: red;"></i>' : '<i class="fas fa-minus-circle" style="color: green;"></i>' !!}</td>
+                                        <td>{!! $pemeriksaan->lainnya_luar == 1 ? '<i class="fas fa-plus-circle" style="color: red;"></i>' : '<i class="fas fa-minus-circle" style="color: green;"></i>' !!}</td>
                                         <td>{{ $pemeriksaan->status_jentik }}</td>
                                         @if(auth()->user()->role === 'RT')
                                         <td>
@@ -241,7 +241,7 @@
                         <select name="bak_mandi" id="bak_mandi" class="form-control">
                             <option value="1">✔️</option>
                             <option value="0">❌</option>
-                            <option value="-1">Tidak ada</option>
+                            <option value="0">Tidak ada</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -249,7 +249,7 @@
                         <select name="ember" id="ember" class="form-control">
                             <option value="1">✔️</option>
                             <option value="0">❌</option>
-                            <option value="-1">Tidak ada</option>
+                            <option value="0">Tidak ada</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -257,7 +257,7 @@
                         <select name="vas_bunga" id="vas_bunga" class="form-control">
                             <option value="1">✔️</option>
                             <option value="0">❌</option>
-                            <option value="-1">Tidak ada</option>
+                            <option value="0">Tidak ada</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -265,7 +265,7 @@
                         <select name="lainnya_dalam" id="lainnya_dalam" class="form-control">
                             <option value="1">✔️</option>
                             <option value="0">❌</option>
-                            <option value="-1">Tidak ada</option>
+                            <option value="0">Tidak ada</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -273,7 +273,7 @@
                         <select name="ban_bekas" id="ban_bekas" class="form-control">
                             <option value="1">✔️</option>
                             <option value="0">❌</option>
-                            <option value="-1">Tidak ada</option>
+                            <option value="0">Tidak ada</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -281,7 +281,7 @@
                         <select name="kaleng_bekas" id="kaleng_bekas" class="form-control">
                             <option value="1">✔️</option>
                             <option value="0">❌</option>
-                            <option value="-1">Tidak ada</option>
+                            <option value="0">Tidak ada</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -289,7 +289,7 @@
                         <select name="lainnya_luar" id="lainnya_luar" class="form-control">
                             <option value="1">✔️</option>
                             <option value="0">❌</option>
-                            <option value="-1">Tidak ada</option>
+                            <option value="0">Tidak ada</option>
                         </select>
                     </div>
                     <div class="form-group">

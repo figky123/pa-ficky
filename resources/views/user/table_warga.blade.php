@@ -45,6 +45,7 @@
                     <th>Alamat</th>
                     <th>RT</th>
                     <th>RW</th>
+                    <th>Foto KK</th>
                     @if(Auth::check() && Auth::user()->hasRole('Admin'))
                     <th>Status</th>
                     <th>Aksi</th>
@@ -61,6 +62,15 @@
                     <td>{{ $user->alamat }}</td>
                     <td>{{ $user->RT }}</td>
                     <td>{{ $user->RW }}</td>
+                    <td>
+                      @if($user->foto_kk)
+                      <button type="button" class="btn btn-primary view-image-btn" data-toggle="modal" data-target="#imageModal" data-image="{{ asset('storage/foto_kk/' . $user->foto_kk) }}" data-created-at="{{ $user->created_at->format('Y-m-d H:i:s') }}">
+                        View
+                      </button>
+                      @else
+                      Tidak ada Foto
+                      @endif
+                    </td>
                     @if(Auth::check() && Auth::user()->hasRole('Admin'))
                     <td>
                       @if($user->status_akun == 'not_verified')
@@ -91,10 +101,35 @@
     </div>
   </section>
 </main><!-- End #main -->
+<!-- Modal View Image -->
+<div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="imageModalLabel">Foto KK</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <img id="modalImage" src="" alt="Foto KK" class="img-fluid">
+        <p id="createdAtText"></p>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     // Select all elements with class 'verify-button'
     const verifyButtons = document.querySelectorAll('.verify-button');
+
+    $('.view-image-btn').on('click', function() {
+      var imageUrl = $(this).data('image');
+      var createdAt = $(this).data('created-at');
+      $('#modalImage').attr('src', imageUrl);
+      $('#createdAtText').text('Foto KK: ' + new Date(createdAt).toLocaleString());
+    });
 
     // Loop through each verify button and attach click event listener
     verifyButtons.forEach(button => {
