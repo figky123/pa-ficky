@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -42,23 +43,27 @@ class AuthController extends Controller
     }
 
     public function loginUser(Request $request)
-    {
-        $credentials = $request->only('email', 'password');
+{
+    $credentials = $request->only('email', 'password');
 
-        $user = User::where('email', $request->email)->first();
+    $user = User::where('email', $request->email)->first();
 
-        if ($user && Hash::check($request->password, $user->password)) {
-            if ($user->status_akun !== 'verified') {
-                return back()->with('error', 'Akun belum diverifikasi, silahkan hubungi adm@lurah.gmail.com untuk lebih lanjut');
-            }
-
-            Auth::login($user);
-            $request->session()->flash('success', 'Login berhasil');
-            return redirect()->intended('/dashboard');
+    if ($user && Hash::check($request->password, $user->password)) {
+        if ($user->status_akun === 'rejected') {
+            return back()->with('error', 'Pendaftaran akun anda ditolak, silahkan hubungi adm@lurah.gmail.com untuk lebih lanjut');
         }
 
-        return back()->with('error', 'Email atau password salah');
+        if ($user->status_akun !== 'verified') {
+            return back()->with('error', 'Akun belum diverifikasi, silahkan hubungi adm@lurah.gmail.com untuk lebih lanjut');
+        }
+
+        Auth::login($user);
+        $request->session()->flash('success', 'Login berhasil');
+        return redirect()->intended('/dashboard');
     }
+
+    return back()->with('error', 'Email atau password salah');
+}
 
 
 
@@ -210,4 +215,27 @@ class AuthController extends Controller
         }
         return response()->json(['status' => false, 'message' => 'User not found.']);
     }
+
+    public function rejectUser(Request $request)
+    {
+        $user = User::find($request->id);
+
+        if ($user) {
+            // Update user status to 'rejected'
+            $user->status_akun = 'rejected';
+            $user->save();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Pendaftaran Akun berhasil ditolak.'
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'message' => 'Akun tidak ditemukan.'
+            ]);
+        }
+    }
+
+   
 }

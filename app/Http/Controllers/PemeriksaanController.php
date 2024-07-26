@@ -71,12 +71,11 @@ class PemeriksaanController extends Controller
             'ket_pemeriksaan' => 'required|string|max:255',
         ]);
 
-        // Validasi tambahan untuk memastikan tanggal pemeriksaan hanya dalam minggu ini
-        $startOfWeek = now()->startOfWeek()->format('Y-m-d');
-        $endOfWeek = now()->endOfWeek()->format('Y-m-d');
+        // Validasi tambahan untuk memastikan tanggal pemeriksaan hanya hari ini
+        $today = now()->format('Y-m-d');
 
-        if (Carbon::parse($validatedData['tgl_pemeriksaan'])->lt($startOfWeek) || Carbon::parse($validatedData['tgl_pemeriksaan'])->gt($endOfWeek)) {
-            return response()->json(['error' => 'Tanggal pemeriksaan harus dalam minggu ini.'], 400);
+        if (Carbon::parse($validatedData['tgl_pemeriksaan'])->format('Y-m-d') !== $today) {
+            return response()->json(['error' => 'Tanggal pemeriksaan harus hari ini.'], 400);
         }
 
         // Cek apakah sudah ada pemeriksaan dalam minggu yang sama

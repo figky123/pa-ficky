@@ -75,11 +75,18 @@
                     <td>
                       @if($user->status_akun == 'not_verified')
                       <a href="{{ route('user.verify', $user->id) }}" data-id="{{$user->id}}" class="btn verify-button btn-danger">
-                        <i class="bi bi-x-circle"></i> Verify
+                        <i class="bi bi-check-circle"></i> Verify
                       </a>
-                      @else
+                      <a href="{{ route('user.reject', $user->id) }}" data-id="{{$user->id}}" class="btn mt-3 reject-button btn-warning">
+                        <i class="bi bi-x-circle"></i> Reject
+                      </a>
+                      @elseif($user->status_akun == 'verified')
                       <span class="badge badge-success">
                         <i class="bi bi-check-circle"></i> Verified
+                      </span>
+                      @elseif($user->status_akun == 'rejected')
+                      <span class="badge badge-danger">
+                        <i class="bi bi-x-circle"></i> Rejected
                       </span>
                       @endif
                     </td>
@@ -123,6 +130,7 @@
   document.addEventListener('DOMContentLoaded', function() {
     // Select all elements with class 'verify-button'
     const verifyButtons = document.querySelectorAll('.verify-button');
+    const rejectButtons = document.querySelectorAll('.reject-button');
 
     $('.view-image-btn').on('click', function() {
       var imageUrl = $(this).data('image');
@@ -172,6 +180,53 @@
                 // Handle AJAX errors if any
                 console.error('AJAX Error:', error);
                 Swal.fire('Error!', 'Terjadi kesalahan saat memverifikasi akun.', 'error');
+              }
+            });
+          }
+        });
+      });
+    });
+
+    // Loop through each reject button and attach click event listener
+    rejectButtons.forEach(button => {
+      button.addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent default button behavior
+        const userId = this.getAttribute('data-id'); // Get user ID from data-id attribute
+
+        // Confirm rejection action using SweetAlert
+        Swal.fire({
+          title: 'Tolak Akun',
+          text: 'Apakah Anda yakin ingin menolak akun ini?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Ya, tolak!'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // Perform AJAX request to reject user account
+            $.ajax({
+              url: '{{ route("user.reject") }}',
+              method: 'POST',
+              data: {
+                _token: '{{ csrf_token() }}',
+                id: userId
+              },
+              success: function(response) {
+                if (response.status) {
+                  // Show success message using SweetAlert
+                  Swal.fire('Berhasil!', response.message, 'success').then(() => {
+                    location.reload(); // Reload page after successful rejection
+                  });
+                } else {
+                  // Show error message using SweetAlert
+                  Swal.fire('Gagal!', response.message, 'error');
+                }
+              },
+              error: function(xhr, status, error) {
+                // Handle AJAX errors if any
+                console.error('AJAX Error:', error);
+                Swal.fire('Error!', 'Terjadi kesalahan saat menolak akun.', 'error');
               }
             });
           }

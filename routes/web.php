@@ -75,3 +75,5 @@ Route::post('/tindakan/store', [TindakanController::class, 'store'])->name('tind
 Route::get('/testing', [TestingController::class, 'index'])->name('testings');
 
 Route::post('/user/verify', [UserAuthController::class, 'verifyUser'])->name('user.verify');
+Route::post('/user/reject', [UserAuthController::class, 'rejectUser'])->name('user.reject');
+
