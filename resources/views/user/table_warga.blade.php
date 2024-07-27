@@ -14,7 +14,6 @@
 
 <!-- SweetAlert2 for displaying alerts -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 @section('content')
 <main id="main" class="main">
   <div class="pagetitle">

@@ -166,11 +166,6 @@ class PemeriksaanController extends Controller
         return redirect()->back()->with('success', 'Status pemeriksaan berhasil diperbarui');
     }
 
-
-
-
-
-
     /**
      * Display the specified resource.
      */

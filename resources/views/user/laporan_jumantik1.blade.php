@@ -8,9 +8,10 @@
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- SweetAlert2 CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 <!-- SweetAlert2 -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 @section('content')
 @if(session('success'))
 <script>
@@ -49,7 +50,7 @@
                         $user = Auth::user(); // Get the currently logged-in user
                         @endphp
                         <!-- Keterangan kolom di atas tabel -->
-                        @if ($user->role === 'Lurah' || $user->role === 'Puskesmas') <!-- Check if the user's role is 'Lurah' or 'Puskesmas' -->
+                        @if ($user->role === 'RT') <!-- Check if the user's role is 'RT' -->
                         <div class="alert alert-info" role="alert">
                             <strong>Keterangan Kolom Kontainer:</strong>
                             <ul>
@@ -58,6 +59,7 @@
                                 <li>(Tidak ada): Kontainer tidak ada di lokasi</li>
                             </ul>
                         </div>
+
                         @php
                         $positif = $pemeriksaans->filter(function ($pemeriksaan) {
                         $jumlah = $pemeriksaan->bak_mandi + $pemeriksaan->ember + $pemeriksaan->vas_bunga + $pemeriksaan->lainnya_dalam + $pemeriksaan->ban_bekas + $pemeriksaan->kaleng_bekas;
@@ -65,6 +67,7 @@
                         })->count();
                         $negatif = $pemeriksaans->count() - $positif;
                         @endphp
+
                         @if ($positif > 0)
                         <div class="alert alert-danger" role="alert">
                             Terdapat {{ $positif }} lokasi dengan status jentik positif.
@@ -80,6 +83,17 @@
                             Tidak ada data jentik yang tersedia.
                         </div>
                         @endif
+                        @endif
+
+                        @if ($user->role === 'Warga') <!-- Check if the user's role is 'warga' -->
+                        @foreach ($pemeriksaans as $pemeriksaan)
+                        @if ($pemeriksaan->status_pemeriksaan === 'ditolak')
+                        <div class="alert alert-warning" role="alert">
+                            Data pemeriksaan anda ada yang ditolak. Silahkan datang ke RT setempat untuk validasi.
+                        </div>
+                        @break <!-- Exit loop once message is shown, assuming one message is enough -->
+                        @endif
+                        @endforeach
                         @endif
                         <!-- Table with stripped rows -->
                         <div class="table-responsive">
@@ -125,9 +139,12 @@
                                         @if(auth()->user()->role === 'RT')
                                         <td>
                                             @if($pemeriksaan->status_pemeriksaan == 'proses')
-                                            <div class="btn-group" role="group">
-                                                <a href="{{ route('update_status', ['id' => $pemeriksaan->id, 'status' => 'diterima']) }}" class="btn btn-primary btn-sm" data-id="{{ $pemeriksaan->id }}" id="verifikasiButton" title="Klik untuk memverifikasi laporan">
-                                                    </i> Verifikasi Data
+                                            <div class="btn-group-vertical" role="group">
+                                                <a href="{{ route('update_status', ['id' => $pemeriksaan->id, 'status' => 'diterima']) }}" class="btn btn-primary btn-sm verifikasi-btn" data-id="{{ $pemeriksaan->id }}" title="Klik untuk memverifikasi laporan">
+                                                    Verifikasi
+                                                </a>
+                                                <a href="{{ route('update_status', ['id' => $pemeriksaan->id, 'status' => 'ditolak']) }}" class="btn btn-danger btn mt-3 btn-sm tolak-btn" data-id="{{ $pemeriksaan->id }}" title="Klik untuk menolak laporan">
+                                                    Tolak
                                                 </a>
                                             </div>
                                             @else
@@ -331,6 +348,7 @@
 </div>
 <script>
     $(document).ready(function() {
+        // Handler for viewing image
         $('.view-image-btn').on('click', function() {
             var imageUrl = $(this).data('image');
             var createdAt = $(this).data('created-at');
@@ -338,6 +356,7 @@
             $('#createdAtText').text('Waktu Pemeriksaan: ' + new Date(createdAt).toLocaleString());
         });
 
+        // Handler for form submission with confirmation
         $('#formTambahData').on('submit', function(event) {
             event.preventDefault();
             var formData = new FormData(this);
@@ -393,11 +412,14 @@
                 }
             });
         });
-        $('.btn-group .btn').on('click', function(event) {
-            event.preventDefault();
-            var href = $(this).attr('href');
-            var action = $(this).text().trim();
-            var confirmationMessage = 'Apakah Anda yakin laporan ini akan ' + action.toLowerCase() + '?';
+
+        $('.verifikasi-btn, .tolak-btn').on('click', function(event) {
+            event.preventDefault(); // Prevent default link action
+            var href = $(this).attr('href'); // Get the URL from the href attribute
+            var action = $(this).hasClass('verifikasi-btn') ? 'verifikasi' : 'tolak';
+            var confirmationMessage = action === 'verifikasi' ?
+                'Apakah Anda yakin laporan ini akan diverifikasi?' :
+                'Apakah Anda yakin laporan ini akan ditolak?';
 
             Swal.fire({
                 title: 'Konfirmasi',
@@ -406,33 +428,11 @@
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Ya, ' + action + '!',
+                confirmButtonText: action === 'verifikasi' ? 'Ya, verifikasi!' : 'Ya, tolak!',
                 cancelButtonText: 'Batal'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.href = href;
-                }
-            });
-        });
-        // Handler untuk tombol verifikasi
-        $('#verifikasiButton').on('click', function(event) {
-            event.preventDefault(); // Mencegah tindakan default tombol
-
-            var id = $(this).data('id');
-            var url = "{{ route('update_status', ['id' => ':id', 'status' => 'diterima']) }}".replace(':id', id);
-
-            Swal.fire({
-                title: 'Konfirmasi',
-                text: 'Apakah Anda yakin laporan ini akan diverifikasi?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Ya, verifikasi!',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = url;
+                    window.location.href = href; // Redirect to the URL
                 }
             });
         });
