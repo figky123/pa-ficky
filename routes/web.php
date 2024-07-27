@@ -36,6 +36,7 @@ Route::get('/register', [UserAuthController::class, 'registerUserForm'])->name('
 Route::post('/register', [UserAuthController::class, 'registerUser'])->name('user.register');
 Route::get('/user/{id}/edit', [UserAuthController::class, 'editUser'])->name('user.edit');
 Route::put('/user/{id}', [UserAuthController::class, 'updateUser'])->name('user.update');
+Route::post('/user/delete', [UserAuthController::class, 'deleteUser'])->name('user.delete');
 Route::get('/token', function () {
     return csrf_token();
 });

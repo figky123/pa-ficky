@@ -94,6 +94,11 @@
                       <a href="{{ route('user.edit', $user->id) }}" class="btn btn-primary">
                         <i class="bi bi-pencil-square"></i> <!-- Icon from Bootstrap Icons -->
                       </a>
+                      @if($user->status_akun == 'rejected')
+                      <a href="{{ route('user.delete') }}" data-id="{{$user->id}}" class="btn mt-3 delete-button btn-danger">
+                        <i class="bi bi-trash"></i>
+                      </a>
+                      @endif
                     </td>
                     @endif
                   </tr>
@@ -131,6 +136,7 @@
     // Select all elements with class 'verify-button'
     const verifyButtons = document.querySelectorAll('.verify-button');
     const rejectButtons = document.querySelectorAll('.reject-button');
+    const deleteButtons = document.querySelectorAll('.delete-button');
 
     $('.view-image-btn').on('click', function() {
       var imageUrl = $(this).data('image');
@@ -179,7 +185,6 @@
               error: function(xhr, status, error) {
                 // Handle AJAX errors if any
                 console.error('AJAX Error:', error);
-                Swal.fire('Error!', 'Terjadi kesalahan saat memverifikasi akun.', 'error');
               }
             });
           }
@@ -187,7 +192,6 @@
       });
     });
 
-    // Loop through each reject button and attach click event listener
     rejectButtons.forEach(button => {
       button.addEventListener('click', function(event) {
         event.preventDefault(); // Prevent default button behavior
@@ -226,7 +230,51 @@
               error: function(xhr, status, error) {
                 // Handle AJAX errors if any
                 console.error('AJAX Error:', error);
-                Swal.fire('Error!', 'Terjadi kesalahan saat menolak akun.', 'error');
+              }
+            });
+          }
+        });
+      });
+    });
+
+    deleteButtons.forEach(button => {
+      button.addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent default button behavior
+        const userId = this.getAttribute('data-id'); // Get user ID from data-id attribute
+
+        // Confirm delete action using SweetAlert
+        Swal.fire({
+          title: 'Hapus Akun',
+          text: 'Apakah Anda yakin ingin menghapus akun ini?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Ya, hapus!'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // Perform AJAX request to delete user account
+            $.ajax({
+              url: '{{ route("user.delete") }}',
+              method: 'POST',
+              data: {
+                _token: '{{ csrf_token() }}',
+                id: userId
+              },
+              success: function(response) {
+                if (response.status) {
+                  // Show success message using SweetAlert
+                  Swal.fire('Berhasil!', response.message, 'success').then(() => {
+                    location.reload(); // Reload page after successful delete
+                  });
+                } else {
+                  // Show error message using SweetAlert
+                  Swal.fire('Gagal!', response.message, 'error');
+                }
+              },
+              error: function(xhr, status, error) {
+                // Handle AJAX errors if any
+                console.error('AJAX Error:', error);
               }
             });
           }

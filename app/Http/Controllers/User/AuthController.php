@@ -43,27 +43,27 @@ class AuthController extends Controller
     }
 
     public function loginUser(Request $request)
-{
-    $credentials = $request->only('email', 'password');
+    {
+        $credentials = $request->only('email', 'password');
 
-    $user = User::where('email', $request->email)->first();
+        $user = User::where('email', $request->email)->first();
 
-    if ($user && Hash::check($request->password, $user->password)) {
-        if ($user->status_akun === 'rejected') {
-            return back()->with('error', 'Pendaftaran akun anda ditolak, silahkan hubungi adm@lurah.gmail.com untuk lebih lanjut');
+        if ($user && Hash::check($request->password, $user->password)) {
+            if ($user->status_akun === 'rejected') {
+                return back()->with('error', 'Pendaftaran akun anda ditolak, silahkan hubungi adm@lurah.gmail.com untuk lebih lanjut');
+            }
+
+            if ($user->status_akun !== 'verified') {
+                return back()->with('error', 'Akun belum diverifikasi, silahkan hubungi adm@lurah.gmail.com untuk lebih lanjut');
+            }
+
+            Auth::login($user);
+            $request->session()->flash('success', 'Login berhasil');
+            return redirect()->intended('/dashboard');
         }
 
-        if ($user->status_akun !== 'verified') {
-            return back()->with('error', 'Akun belum diverifikasi, silahkan hubungi adm@lurah.gmail.com untuk lebih lanjut');
-        }
-
-        Auth::login($user);
-        $request->session()->flash('success', 'Login berhasil');
-        return redirect()->intended('/dashboard');
+        return back()->with('error', 'Email atau password salah');
     }
-
-    return back()->with('error', 'Email atau password salah');
-}
 
 
 
@@ -74,7 +74,7 @@ class AuthController extends Controller
             'email' => 'required|email|max:255|unique:users,email',
             'password' => 'required|string|min:8|max:255',
             'no_kk' => 'required|numeric|digits:16|unique:users,no_kk',
-            'no_hp_user' => 'required|numeric|digits_between:10,13',
+            'no_hp_user' => 'required|numeric|digits_between:10,13|unique:users,no_hp_user',
             'alamat' => 'required|string|max:255',
             'RT' => 'required|numeric|between:1,57',
             'RW' => 'required|numeric|between:1,12',
@@ -104,6 +104,7 @@ class AuthController extends Controller
             'no_hp_user.required' => 'Nomor HP harus diisi.',
             'no_hp_user.numeric' => 'Nomor HP harus berupa angka.',
             'no_hp_user.digits_between' => 'Nomor HP harus antara 10 hingga 13 digit.',
+            'no_hp_user.unique' => 'Nomor Hp sudah terdaftar.',
 
             'alamat.required' => 'Alamat harus diisi.',
             'alamat.string' => 'Alamat harus berupa string.',
@@ -194,6 +195,16 @@ class AuthController extends Controller
         return redirect()->route('wargas')->with('success', 'Data warga berhasil diperbarui.');
     }
 
+    public function deleteUser(Request $request)
+    {
+        $user = User::findOrFail($request->id);
+        if ($user->status_akun === 'rejected') {
+            $user->delete();
+            return response()->json(['status' => true, 'message' => 'Akun berhasil dihapus.']);
+        }
+        return response()->json(['status' => false, 'message' => 'Akun tidak bisa dihapus.']);
+    }
+
 
     public function test()
     {
@@ -236,6 +247,4 @@ class AuthController extends Controller
             ]);
         }
     }
-
-   
 }
