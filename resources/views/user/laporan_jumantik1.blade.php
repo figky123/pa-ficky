@@ -84,7 +84,6 @@
                         </div>
                         @endif
                         @endif
-
                         @if ($user->role === 'Warga') <!-- Check if the user's role is 'warga' -->
                         @foreach ($pemeriksaans as $pemeriksaan)
                         @if ($pemeriksaan->status_pemeriksaan === 'ditolak')
