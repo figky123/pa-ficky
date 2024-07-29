@@ -34,20 +34,33 @@ class TindakanController extends Controller
      */
     public function store(Request $request)
     {
-        $currentDate = now();
-        $startOfWeek = $currentDate->startOfWeek()->format('Y-m-d');
-        $endOfWeek = $currentDate->endOfWeek()->format('Y-m-d');
+        $currentDate = now()->format('Y-m-d');  // Get the current date
 
+        // Validation rules
         $validator = Validator::make($request->all(), [
-            'RW' => 'required|numeric|between:1,12',
+            'RW' => [
+                'required',
+                'numeric',
+                'between:1,12',
+                function ($attribute, $value, $fail) use ($currentDate) {
+                    $exists = Tindakan::where('RW', $value)
+                        ->whereDate('tgl_tindakan', $currentDate)
+                        ->exists();
+
+                    if ($exists) {
+                        $fail('RW sudah ada pada tanggal ' . $currentDate . '.');
+                    }
+                }
+            ],
             'nama_petugas' => 'required|string|max:255|regex:/^[a-zA-Z\s]*$/',
-            'tgl_tindakan' => 'required|date|after_or_equal:' . $startOfWeek . '|before_or_equal:' . $endOfWeek,
+            'tgl_tindakan' => 'required|date|date_equals:' . $currentDate,
             'ket_tindakan' => 'required|string|max:255',
             'bukti_tindakan' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ], [
             'RW.required' => 'RW harus diisi.',
             'RW.numeric' => 'RW harus berupa angka.',
             'RW.between' => 'RW harus antara 1 hingga 12.',
+            'RW.unique' => 'RW sudah ada pada tanggal ' . $currentDate . '.',
 
             'nama_petugas.required' => 'Nama petugas harus diisi.',
             'nama_petugas.string' => 'Nama petugas harus berupa huruf.',
@@ -56,8 +69,7 @@ class TindakanController extends Controller
 
             'tgl_tindakan.required' => 'Tanggal tindakan harus diisi.',
             'tgl_tindakan.date' => 'Format tanggal tindakan tidak valid.',
-            'tgl_tindakan.after_or_equal' => 'Tanggal tindakan tidak boleh mundur dari minggu ini.',
-            'tgl_tindakan.before_or_equal' => 'Tanggal tindakan tidak boleh lebih dari minggu ini.',
+            'tgl_tindakan.date_equals' => 'Tanggal tindakan harus hari ini.',
 
             'ket_tindakan.required' => 'Keterangan tindakan harus diisi.',
             'ket_tindakan.string' => 'Keterangan tindakan harus berupa string.',
